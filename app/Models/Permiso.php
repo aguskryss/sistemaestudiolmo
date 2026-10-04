@@ -16,7 +16,7 @@ class Permiso extends Model
     protected $attributes = ['estado' => 'a_presentar'];
 
     protected $fillable = [
-        'obra_id', 'tipo', 'organismo', 'numero_expediente', 'estado', 'fecha_presentacion',
+        'obra_id', 'tipo_permiso_id', 'organismo', 'numero_expediente', 'estado', 'fecha_presentacion',
         'fecha_aprobacion', 'fecha_vencimiento', 'observaciones',
     ];
 
@@ -33,6 +33,17 @@ class Permiso extends Model
     public function obra(): BelongsTo
     {
         return $this->belongsTo(Obra::class);
+    }
+
+    public function tipoPermiso(): BelongsTo
+    {
+        return $this->belongsTo(Opcion::class, 'tipo_permiso_id');
+    }
+
+    /** Nombre del tipo de permiso, para mostrar. */
+    public function nombre(): string
+    {
+        return $this->tipoPermiso?->nombre ?? 'Permiso';
     }
 
     public function adjuntos(): MorphMany

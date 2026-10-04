@@ -27,12 +27,18 @@
                 <x-dato label="Teléfono">{{ $estudio->telefono }}</x-dato>
                 <x-dato label="Dirección">{{ $estudio->direccion }}</x-dato>
             </dl>
-            <dl class="panel space-y-5">
-                <p class="rotulo-texto">Persona de contacto</p>
-                <x-dato label="Nombre">{{ $estudio->contacto_nombre }}</x-dato>
-                <x-dato label="Teléfono">{{ $estudio->contacto_telefono }}</x-dato>
-                <x-dato label="Email">@if ($estudio->contacto_email)<a class="enlace" href="mailto:{{ $estudio->contacto_email }}">{{ $estudio->contacto_email }}</a>@endif</x-dato>
-            </dl>
+            <div class="panel">
+                <p class="rotulo-texto">Contactos</p>
+                @forelse ($estudio->contactos as $c)
+                    <div class="mt-4 border-t border-linea pt-4 text-sm first-of-type:border-0 first-of-type:pt-0">
+                        <p class="text-base">{{ $c->nombre }}@if ($c->cargo) <span class="text-gris">· {{ $c->cargo }}</span>@endif</p>
+                        @if ($c->telefono)<p class="mt-1 font-mono"><a href="tel:{{ preg_replace('/[^0-9+]/', '', $c->telefono) }}" class="hover:underline">{{ $c->telefono }}</a></p>@endif
+                        @if ($c->email)<p class="mt-1"><a class="enlace" href="mailto:{{ $c->email }}">{{ $c->email }}</a></p>@endif
+                    </div>
+                @empty
+                    <p class="mt-3 text-sm text-gris">Sin contactos cargados.</p>
+                @endforelse
+            </div>
             @if ($estudio->notas)
                 <div class="panel">
                     <p class="rotulo-texto">Notas</p>

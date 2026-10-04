@@ -3,8 +3,8 @@
     $indicadores = [
         ['Obras en curso', $obrasEnCurso, route('obras.index', ['estado' => 'en_obra'])],
         ['En proyecto', $obrasEnProyecto, route('obras.index', ['estado' => 'proyecto'])],
-        ['Seguros por vencer', $segurosPorVencer->count(), '#vencimientos'],
-        ['Permisos por vencer', $permisosPorVencer->count(), '#vencimientos'],
+        ['En cotización', $obrasEnCotizacion, route('obras.index', ['estado' => 'en_cotizacion'])],
+        ['Vencimientos', $segurosPorVencer->count() + $permisosPorVencer->count(), '#vencimientos'],
     ];
 @endphp
 
@@ -31,6 +31,15 @@
             </a>
         @endforeach
     </dl>
+
+    {{-- Agenda de la semana --}}
+    <section class="mt-14">
+        @include('agenda._semana', ['titulo' => 'Mi semana'])
+        <div class="mt-4 flex flex-wrap items-start justify-between gap-4">
+            <div class="w-full max-w-md">@include('agenda._form')</div>
+            <a href="{{ route('agenda.index') }}" class="enlace text-sm text-gris hover:text-tinta">Agenda del equipo →</a>
+        </div>
+    </section>
 
     <div class="mt-14 grid gap-14 xl:grid-cols-2">
         {{-- Esta semana --}}
@@ -96,7 +105,7 @@
             @endforeach
             @foreach ($permisosPorVencer as $p)
                 <a href="{{ route('obras.permisos', $p->obra) }}" class="flex items-baseline justify-between gap-4 border-b border-linea py-3 hover:bg-hueso">
-                    <span class="min-w-0 truncate"><span class="font-mono text-sm text-gris">{{ $p->obra->codigo_corto }}</span> {{ $p->tipo }}</span>
+                    <span class="min-w-0 truncate"><span class="font-mono text-sm text-gris">{{ $p->obra->codigo_corto }}</span> {{ $p->nombre() }}</span>
                     <span class="etiqueta">Vence {{ $p->fecha_vencimiento->format('d.m') }}</span>
                 </a>
             @endforeach

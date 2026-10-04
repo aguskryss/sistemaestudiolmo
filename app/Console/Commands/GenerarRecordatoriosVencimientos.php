@@ -35,7 +35,7 @@ class GenerarRecordatoriosVencimientos extends Command
             );
         });
 
-        Permiso::with('obra')
+        Permiso::with(['obra', 'tipoPermiso'])
             ->whereBetween('fecha_vencimiento', [today(), today()->addDays(30)])
             ->whereHas('obra', fn ($q) => $q->where('estado', '!=', EstadoObra::Terminada))
             ->get()
@@ -43,7 +43,7 @@ class GenerarRecordatoriosVencimientos extends Command
                 $creados += $this->crear(
                     $p,
                     $usuarios,
-                    "Vence {$p->tipo} — {$p->obra->codigo}",
+                    "Vence {$p->nombre()} — {$p->obra->codigo}",
                     "{$p->obra->nombre}".($p->numero_expediente ? " · Expte. {$p->numero_expediente}" : '')." · Vence el {$p->fecha_vencimiento->format('d.m.Y')}.",
                 );
             });

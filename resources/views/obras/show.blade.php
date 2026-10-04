@@ -63,11 +63,12 @@
             <section>
                 <div class="flex items-baseline justify-between border-b border-linea pb-3">
                     <h2 class="rotulo-texto">Notas de la obra</h2>
-                    <a href="{{ route('clientes.show', $obra->cliente) }}" class="enlace text-sm text-gris hover:text-tinta">Todas las notas del cliente</a>
+                    @if ($obra->cliente)
+                        <a href="{{ route('clientes.show', $obra->cliente) }}" class="enlace text-sm text-gris hover:text-tinta">Todas las notas del cliente</a>
+                    @endif
                 </div>
-                <form method="POST" action="{{ route('clientes.notas.store', $obra->cliente) }}" class="mt-6 space-y-4">
+                <form method="POST" action="{{ route('obras.notas.store', $obra) }}" class="mt-6 space-y-4">
                     @csrf
-                    <input type="hidden" name="obra_id" value="{{ $obra->id }}">
                     <x-area name="contenido" label="Nueva nota" rows="3" required />
                     <button type="submit" class="btn btn-chico">Agregar nota</button>
                 </form>
@@ -88,7 +89,7 @@
         <aside class="space-y-8">
             <dl class="panel grid grid-cols-2 gap-5">
                 <x-dato label="Dirección" class="col-span-2">{{ collect([$obra->direccion, $obra->localidad])->filter()->join(', ') }}</x-dato>
-                <x-dato label="Tipo">{{ $obra->tipo }}</x-dato>
+                <x-dato label="Tipo">{{ $obra->tipoObra?->nombre }}</x-dato>
                 <x-dato label="Superficie">@if ($obra->superficie_m2){{ number_format($obra->superficie_m2, 2, ',', '.') }} m²@endif</x-dato>
                 <x-dato label="Responsable" class="col-span-2">{{ $obra->responsable?->name }}</x-dato>
                 <x-dato label="Inicio">{{ ($obra->fecha_inicio_real ?? $obra->fecha_inicio_prevista)?->format('d.m.Y') }}@if (! $obra->fecha_inicio_real && $obra->fecha_inicio_prevista) <span class="text-gris">(prev.)</span>@endif</x-dato>
@@ -98,17 +99,19 @@
             @if ($obra->estudio)
                 <dl class="panel space-y-4">
                     <p class="rotulo-texto">Estudio contratante</p>
-                    <x-dato label="Contacto">{{ $obra->estudio->contacto_nombre }}</x-dato>
-                    <x-dato label="Teléfono">{{ $obra->estudio->contacto_telefono ?? $obra->estudio->telefono }}</x-dato>
-                    <x-dato label="Email">{{ $obra->estudio->contacto_email ?? $obra->estudio->email }}</x-dato>
+                    <x-dato label="Contacto">{{ $obra->estudioContacto?->nombre }}@if ($obra->estudioContacto?->cargo) <span class="text-gris">· {{ $obra->estudioContacto->cargo }}</span>@endif</x-dato>
+                    <x-dato label="Teléfono">{{ $obra->estudioContacto?->telefono ?? $obra->estudio->telefono }}</x-dato>
+                    <x-dato label="Email">{{ $obra->estudioContacto?->email ?? $obra->estudio->email }}</x-dato>
                 </dl>
             @endif
 
-            <dl class="panel space-y-4">
-                <p class="rotulo-texto">Cliente</p>
-                <x-dato label="Teléfono">{{ $obra->cliente->telefono }}</x-dato>
-                <x-dato label="Email">{{ $obra->cliente->email }}</x-dato>
-            </dl>
+            @if ($obra->cliente)
+                <dl class="panel space-y-4">
+                    <p class="rotulo-texto">Cliente</p>
+                    <x-dato label="Teléfono">{{ $obra->cliente->telefono }}</x-dato>
+                    <x-dato label="Email">{{ $obra->cliente->email }}</x-dato>
+                </dl>
+            @endif
 
             <div class="panel">
                 <div class="flex items-baseline justify-between">
@@ -117,7 +120,7 @@
                 </div>
                 @forelse ($obra->permisos as $permiso)
                     <div class="mt-3 flex items-baseline justify-between gap-3 text-sm">
-                        <span class="truncate">{{ $permiso->tipo }}</span>
+                        <span class="truncate">{{ $permiso->nombre() }}</span>
                         <span class="etiqueta {{ $permiso->estado === \App\Enums\EstadoPermiso::Aprobado ? 'etiqueta-llena' : '' }}">{{ $permiso->estado->label() }}</span>
                     </div>
                 @empty

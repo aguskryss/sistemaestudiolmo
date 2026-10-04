@@ -7,6 +7,7 @@ use App\Models\Contacto;
 use App\Models\Material;
 use App\Models\Obra;
 use App\Models\ObraMaterial;
+use App\Models\Opcion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,25 +36,31 @@ class MaterialController extends Controller
             'materiales' => $materiales,
             'estado' => $estado,
             'conteo' => $conteo,
-            'catalogo' => Material::orderBy('nombre')->get(['nombre', 'unidad']),
+            'catalogo' => Material::where('activo', true)->orderBy('nombre')->get()->mapWithKeys(fn ($m) => [$m->id => "{$m->nombre} ({$m->unidad})"]),
+            'unidades' => Opcion::lista('unidad')->values(),
             'proveedores' => Contacto::orderBy('nombre')->get()->mapWithKeys(fn ($c) => [$c->id => $c->nombre.($c->empresa ? " ({$c->empresa})" : '')]),
         ]);
     }
 
     public function store(Request $request, Obra $obra): RedirectResponse
     {
+        $nuevo = ! $request->filled('material_id');
         $datos = $request->validate([
-            'nombre' => ['required', 'string', 'max:255'],
-            'unidad' => ['required', 'string', 'max:20'],
+            'material_id' => ['nullable', Rule::exists('materiales', 'id')->where('activo', true)],
+            'nombre' => [Rule::requiredIf($nuevo), 'nullable', 'string', 'max:255'],
+            'unidad' => [Rule::requiredIf($nuevo), 'nullable', 'string', Rule::exists('opciones', 'nombre')->where('grupo', 'unidad')],
             'cantidad_necesaria' => ['required', 'numeric', 'gt:0', 'max:9999999'],
             'proveedor_id' => ['nullable', Rule::exists('contactos', 'id')],
             'fecha_necesaria' => ['nullable', 'date'],
             'observaciones' => ['nullable', 'string', 'max:2000'],
-        ]);
+        ], [], ['material_id' => 'material', 'nombre' => 'nombre del material']);
 
-        $material = Material::firstOrCreate(['nombre' => trim($datos['nombre']), 'unidad' => trim($datos['unidad'])]);
+        // Elegido del catálogo, o nuevo (queda agregado al catálogo para la próxima).
+        $material = $nuevo
+            ? Material::firstOrCreate(['nombre' => trim($datos['nombre']), 'unidad' => $datos['unidad']])
+            : Material::findOrFail($datos['material_id']);
 
-        $obra->materiales()->create(['material_id' => $material->id] + collect($datos)->except(['nombre', 'unidad'])->all());
+        $obra->materiales()->create(['material_id' => $material->id] + collect($datos)->except(['material_id', 'nombre', 'unidad'])->all());
 
         return back()->with('status', "{$material->nombre} agregado a la lista.");
     }

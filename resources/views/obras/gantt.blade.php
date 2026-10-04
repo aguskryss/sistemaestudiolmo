@@ -1,7 +1,3 @@
-@php
-    $opcionesTareas = $tareas->pluck('nombre', 'id');
-@endphp
-
 <x-layouts.obra :obra="$obra" seccion="Calendario">
     <x-slot:acciones>
         <button type="button" class="btn" x-data x-on:click="$dispatch('editar-tarea', null)">Agregar tarea</button>
@@ -45,18 +41,6 @@
                 <label class="flex items-end gap-2 pb-2 text-sm">
                     <input type="checkbox" name="es_hito" value="1" class="size-4 accent-tinta" x-bind:checked="tarea?.es_hito"> Es un hito
                 </label>
-                @if ($opcionesTareas->isNotEmpty())
-                    <div class="sm:col-span-2">
-                        <label class="rotulo-texto text-gris" for="dependencias">Empieza después de</label>
-                        <select id="dependencias" name="dependencias[]" multiple size="4" class="campo mt-1"
-                                x-effect="[...$el.options].forEach(o => o.selected = (tarea?.dependencias ?? []).includes(Number(o.value)))">
-                            @foreach ($opcionesTareas as $id => $nombre)
-                                <option value="{{ $id }}" x-bind:disabled="tarea?.id === {{ $id }}">{{ $nombre }}</option>
-                            @endforeach
-                        </select>
-                        <p class="mt-1 text-xs text-gris">Ctrl + clic para elegir varias.</p>
-                    </div>
-                @endif
                 <div class="sm:col-span-2"><x-area name="notas" label="Notas" rows="2" x-effect="$el.value = tarea?.notas ?? ''" /></div>
             </div>
             <div class="mt-6 flex gap-4">
@@ -87,9 +71,6 @@
                         <tr>
                             <td>
                                 {{ $t->nombre }} @if ($t->es_hito) <span class="etiqueta etiqueta-llena ml-1">Hito</span> @endif
-                                @if ($t->dependeDe->isNotEmpty())
-                                    <div class="mt-1 text-xs text-gris">Después de: {{ $t->dependeDe->pluck('nombre')->join(', ') }}</div>
-                                @endif
                             </td>
                             <td class="text-sm">{{ $t->rubro?->nombre ?? '—' }}</td>
                             <td class="text-sm">{{ $t->contacto?->nombre ?? '—' }}</td>
@@ -109,7 +90,6 @@
                                             'id' => $t->id, 'nombre' => $t->nombre, 'fecha_inicio' => $t->fecha_inicio->format('Y-m-d'),
                                             'fecha_fin' => $t->fecha_fin->format('Y-m-d'), 'rubro_id' => $t->rubro_id, 'contacto_id' => $t->contacto_id,
                                             'avance' => $t->avance, 'es_hito' => $t->es_hito, 'notas' => $t->notas,
-                                            'dependencias' => $t->dependeDe->pluck('id'),
                                         ]))">Editar</button>
                                     <x-eliminar :action="route('tareas.destroy', $t)" pregunta="¿Eliminar esta tarea?" />
                                 </div>

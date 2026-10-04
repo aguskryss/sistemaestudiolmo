@@ -32,7 +32,6 @@ export default (config) => ({
             today_button: false,
             popup_on: 'hover',
             infinite_padding: false,
-            move_dependencies: true,
             on_click: (tarea) => {
                 if (config.urlClick) window.location = config.urlClick.replace(':id', tarea.id);
             },

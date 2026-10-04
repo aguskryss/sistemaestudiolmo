@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdjuntoController;
+use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\ArchivoController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\EstudioController;
@@ -34,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('obras', ObraController::class);
     Route::prefix('obras/{obra}')->group(function () {
         Route::post('checklist', [ChecklistController::class, 'store'])->name('obras.checklist.store');
+        Route::post('notas', [NotaController::class, 'storeObra'])->name('obras.notas.store');
 
         Route::get('archivos', [ArchivoController::class, 'index'])->name('obras.archivos');
         Route::post('archivos', [ArchivoController::class, 'subir'])->name('obras.archivos.subir');
@@ -96,6 +99,19 @@ Route::middleware('auth')->group(function () {
     Route::post('adjuntos', [AdjuntoController::class, 'store'])->name('adjuntos.store');
     Route::get('adjuntos/{adjunto}', [AdjuntoController::class, 'descargar'])->name('adjuntos.descargar');
     Route::delete('adjuntos/{adjunto}', [AdjuntoController::class, 'destroy'])->name('adjuntos.destroy');
+
+    // Agenda de tareas de los arquitectos
+    Route::get('agenda', [AgendaController::class, 'index'])->name('agenda.index');
+    Route::post('agenda', [AgendaController::class, 'store'])->name('agenda.store');
+    Route::put('agenda/{tarea}', [AgendaController::class, 'update'])->name('agenda.update');
+    Route::patch('agenda/{tarea}/completar', [AgendaController::class, 'completar'])->name('agenda.completar');
+    Route::delete('agenda/{tarea}', [AgendaController::class, 'destroy'])->name('agenda.destroy');
+
+    // Listas configurables (ABM de los selects)
+    Route::get('configuracion/{seccion?}', [ConfiguracionController::class, 'index'])->name('configuracion');
+    Route::post('configuracion/{seccion}', [ConfiguracionController::class, 'store'])->name('configuracion.store');
+    Route::put('configuracion/{seccion}/{id}', [ConfiguracionController::class, 'update'])->whereNumber('id')->name('configuracion.update');
+    Route::delete('configuracion/{seccion}/{id}', [ConfiguracionController::class, 'destroy'])->whereNumber('id')->name('configuracion.destroy');
 
     // Recordatorios
     Route::get('recordatorios', [RecordatorioController::class, 'index'])->name('recordatorios.index');

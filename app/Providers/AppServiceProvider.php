@@ -57,6 +57,7 @@ class AppServiceProvider extends ServiceProvider
             'permiso' => Permiso::class,
             'seguro' => Seguro::class,
             'nota' => Nota::class,
+            'agenda_tarea' => \App\Models\AgendaTarea::class,
         ]);
 
         // En desarrollo: error si se accede a una relación sin cargar (consultas N+1) o a un atributo inexistente.

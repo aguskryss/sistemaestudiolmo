@@ -21,14 +21,7 @@
             @csrf
             <template x-if="p"><input type="hidden" name="_method" value="PUT"></template>
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <div>
-                    <x-campo name="tipo" label="Permiso" list="tipos-permiso" required x-bind:value="p?.tipo ?? @js(old('tipo', ''))" />
-                    <datalist id="tipos-permiso">
-                        @foreach (['Permiso de obra', 'Registro de planos', 'Permiso de demolición', 'Aviso de obra', 'Conexión de agua', 'Conexión de cloacas', 'Conexión eléctrica', 'Conexión de gas', 'Final de obra', 'Habilitación'] as $t)
-                            <option value="{{ $t }}">
-                        @endforeach
-                    </datalist>
-                </div>
+                <x-select name="tipo_permiso_id" label="Permiso" placeholder="Elegí uno" :options="$tipos" required x-effect="$el.value = p?.tipo_permiso_id ?? @js((string) old('tipo_permiso_id', ''))" />
                 <x-campo name="organismo" label="Organismo" placeholder="Municipio, empresa de servicios…" x-bind:value="p?.organismo ?? @js(old('organismo', ''))" />
                 <x-campo name="numero_expediente" label="N° expediente" x-bind:value="p?.numero_expediente ?? @js(old('numero_expediente', ''))" />
                 <x-select name="estado" label="Estado" :options="EstadoPermiso::opciones()" x-effect="$el.value = p?.estado ?? @js(old('estado', 'a_presentar'))" />
@@ -49,7 +42,7 @@
             <div>
                 <p class="flex flex-wrap items-center gap-3">
                     <span class="{{ $claseEstado($permiso->estado) }}">{{ $permiso->estado->label() }}</span>
-                    <span class="font-serif text-xl">{{ $permiso->tipo }}</span>
+                    <span class="font-serif text-xl">{{ $permiso->nombre() }}</span>
                 </p>
                 <p class="mt-2 text-sm text-gris">{{ collect([$permiso->organismo, $permiso->numero_expediente ? 'Expte. '.$permiso->numero_expediente : null])->filter()->join(' · ') }}</p>
                 @if ($permiso->observaciones)
@@ -69,7 +62,7 @@
                 <div class="mt-4 flex gap-4 text-sm">
                     <button type="button" class="enlace cursor-pointer text-gris hover:text-tinta" x-data
                         x-on:click="$dispatch('editar-permiso', @js([
-                            'id' => $permiso->id, 'tipo' => $permiso->tipo, 'organismo' => $permiso->organismo,
+                            'id' => $permiso->id, 'tipo_permiso_id' => (string) $permiso->tipo_permiso_id, 'organismo' => $permiso->organismo,
                             'numero_expediente' => $permiso->numero_expediente, 'estado' => $permiso->estado->value,
                             'fecha_presentacion' => $permiso->fecha_presentacion?->format('Y-m-d'),
                             'fecha_aprobacion' => $permiso->fecha_aprobacion?->format('Y-m-d'),

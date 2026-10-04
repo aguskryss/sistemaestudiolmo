@@ -4,6 +4,7 @@
     // Las secciones aparecen como link a medida que existen sus rutas.
     $secciones = [
         'inicio' => 'Inicio',
+        'agenda.index' => 'Agenda',
         'obras.index' => 'Obras',
         'estudios.index' => 'Estudios',
         'clientes.index' => 'Clientes',
@@ -11,6 +12,7 @@
         'cotizaciones.index' => 'Cotizaciones',
         'calendario' => 'Calendario',
         'recordatorios.index' => 'Recordatorios',
+        'configuracion' => 'Configuración',
     ];
     if (auth()->user()->esAdmin()) {
         $secciones['usuarios.index'] = 'Usuarios';

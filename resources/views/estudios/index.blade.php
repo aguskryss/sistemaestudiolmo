@@ -17,7 +17,7 @@
                 <thead>
                     <tr>
                         <th>Estudio</th>
-                        <th>Contacto</th>
+                        <th>Contactos</th>
                         <th>Teléfono</th>
                         <th class="num">Obras activas</th>
                         <th class="num">Total</th>
@@ -32,8 +32,8 @@
                                     <div class="text-sm text-gris">{{ $estudio->razon_social }}</div>
                                 @endif
                             </td>
-                            <td>{{ $estudio->contacto_nombre ?? '—' }}</td>
-                            <td class="font-mono text-sm">{{ $estudio->contacto_telefono ?? $estudio->telefono ?? '—' }}</td>
+                            <td>{{ $estudio->contactos->pluck('nombre')->join(', ') ?: '—' }}</td>
+                            <td class="font-mono text-sm">{{ $estudio->telefono ?? $estudio->contactos->first()?->telefono ?? '—' }}</td>
                             <td class="num">{{ $estudio->obras_activas_count }}</td>
                             <td class="num">{{ $estudio->obras_count }}</td>
                         </tr>

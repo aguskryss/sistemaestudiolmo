@@ -7,6 +7,7 @@ use App\Models\ChecklistPlantillaItem;
 use App\Models\Cliente;
 use App\Models\Estudio;
 use App\Models\Obra;
+use App\Models\Opcion;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -87,9 +88,9 @@ class ObraController extends Controller
     public function show(Obra $obra): View
     {
         $obra->load([
-            'cliente', 'estudio', 'responsable',
+            'cliente', 'estudio', 'estudioContacto', 'tipoObra', 'responsable',
             'checklist.completadoPor',
-            'permisos' => fn ($q) => $q->orderBy('fecha_vencimiento'),
+            'permisos' => fn ($q) => $q->with('tipoPermiso')->orderBy('fecha_vencimiento'),
             'seguros.contacto',
             'notas' => fn ($q) => $q->with('autor')->orderByDesc('fijada')->latest(),
         ]);
@@ -125,24 +126,29 @@ class ObraController extends Controller
 
     private function datosFormulario(Obra $obra): array
     {
+        $estudios = Estudio::with('contactos')->orderBy('nombre')->get();
+
         return [
             'obra' => $obra,
             'clientes' => Cliente::orderBy('nombre')->pluck('nombre', 'id'),
-            'estudios' => Estudio::orderBy('nombre')->pluck('nombre', 'id'),
+            'estudios' => $estudios->pluck('nombre', 'id'),
+            'contactosPorEstudio' => $estudios->mapWithKeys(fn ($e) => [$e->id => $e->contactos->map(fn ($c) => ['id' => $c->id, 'nombre' => $c->nombre.($c->cargo ? " ({$c->cargo})" : '')])->values()]),
+            'tipos' => Opcion::lista('tipo_obra', $obra->tipo_obra_id),
             'usuarios' => User::where('activo', true)->orderBy('name')->pluck('name', 'id'),
         ];
     }
 
     private function validar(Request $request): array
     {
-        return $request->validate([
+        $datos = $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
-            'cliente_id' => ['required', Rule::exists('clientes', 'id')->whereNull('deleted_at')],
+            'cliente_id' => ['nullable', Rule::exists('clientes', 'id')->whereNull('deleted_at')],
             'estudio_id' => ['nullable', Rule::exists('estudios', 'id')->whereNull('deleted_at')],
             'codigo_estudio' => ['nullable', 'string', 'max:50'],
+            'estudio_contacto_id' => ['nullable', Rule::exists('estudio_contactos', 'id')->where('estudio_id', (int) $request->input('estudio_id'))],
             'responsable_id' => ['nullable', Rule::exists('users', 'id')],
             'estado' => ['required', Rule::enum(EstadoObra::class)],
-            'tipo' => ['nullable', 'string', 'max:50'],
+            'tipo_obra_id' => ['nullable', Rule::exists('opciones', 'id')->where('grupo', 'tipo_obra')],
             'direccion' => ['nullable', 'string', 'max:255'],
             'localidad' => ['nullable', 'string', 'max:255'],
             'superficie_m2' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
@@ -151,6 +157,13 @@ class ObraController extends Controller
             'fecha_fin_prevista' => ['nullable', 'date', 'after_or_equal:fecha_inicio_prevista'],
             'fecha_fin_real' => ['nullable', 'date'],
             'descripcion' => ['nullable', 'string', 'max:10000'],
-        ]);
+        ], [], ['estudio_contacto_id' => 'contacto del estudio']);
+
+        // Sin estudio no hay código ni contacto del estudio.
+        if (empty($datos['estudio_id'])) {
+            $datos['codigo_estudio'] = $datos['estudio_contacto_id'] = null;
+        }
+
+        return $datos;
     }
 }

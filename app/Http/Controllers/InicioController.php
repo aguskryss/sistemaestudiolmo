@@ -10,6 +10,7 @@ use App\Models\Permiso;
 use App\Models\Recordatorio;
 use App\Models\Seguro;
 use App\Models\Tarea;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -19,7 +20,10 @@ class InicioController extends Controller
     {
         $activa = fn ($q) => $q->where('estado', '!=', EstadoObra::Terminada);
 
-        return view('inicio', [
+        return view('inicio', AgendaController::semana($request, $request->user()) + [
+            'obras' => AgendaController::obrasParaSelect(),
+            'usuarios' => User::where('activo', true)->orderBy('name')->get(),
+            'obrasEnCotizacion' => Obra::where('estado', EstadoObra::EnCotizacion)->count(),
             'obrasEnCurso' => Obra::where('estado', EstadoObra::EnObra)->count(),
             'obrasEnProyecto' => Obra::where('estado', EstadoObra::Proyecto)->count(),
             'recordatorios' => Recordatorio::where('user_id', $request->user()->id)
@@ -32,7 +36,7 @@ class InicioController extends Controller
                 ->whereBetween('vigencia_hasta', [today()->subDays(7), today()->addDays(15)])
                 ->orderBy('vigencia_hasta')
                 ->get(),
-            'permisosPorVencer' => Permiso::with('obra')
+            'permisosPorVencer' => Permiso::with(['obra', 'tipoPermiso'])
                 ->whereHas('obra', $activa)
                 ->whereBetween('fecha_vencimiento', [today(), today()->addDays(30)])
                 ->orderBy('fecha_vencimiento')

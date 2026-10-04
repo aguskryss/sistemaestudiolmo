@@ -61,6 +61,11 @@ class User extends Authenticatable
         return $this->hasMany(Obra::class, 'responsable_id');
     }
 
+    public function agenda(): HasMany
+    {
+        return $this->hasMany(AgendaTarea::class);
+    }
+
     public function recordatorios(): HasMany
     {
         return $this->hasMany(Recordatorio::class);

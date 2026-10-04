@@ -11,9 +11,8 @@
             @if ($mostrarEstudio)
                 {{ $obra->estudio?->nombre ?? 'Obra directa' }}@if ($obra->codigo_estudio) <span class="font-mono">({{ $obra->codigo_estudio }})</span>@endif
             @endif
-            @if ($mostrarEstudio && $mostrarCliente) · @endif
-            @if ($mostrarCliente)
-                Cliente: {{ $obra->cliente?->nombre }}
+            @if ($mostrarCliente && $obra->cliente)
+                @if ($mostrarEstudio) · @endif Cliente: {{ $obra->cliente->nombre }}
             @endif
             @if ($obra->direccion) · {{ $obra->direccion }} @endif
         </span>

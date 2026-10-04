@@ -18,7 +18,7 @@ class Obra extends Model
     protected $attributes = ['estado' => 'proyecto'];
 
     protected $fillable = [
-        'numero', 'cliente_id', 'estudio_id', 'codigo_estudio', 'responsable_id', 'nombre', 'direccion', 'localidad', 'tipo', 'estado',
+        'numero', 'cliente_id', 'estudio_id', 'codigo_estudio', 'estudio_contacto_id', 'responsable_id', 'nombre', 'direccion', 'localidad', 'tipo_obra_id', 'estado',
         'superficie_m2', 'fecha_inicio_prevista', 'fecha_inicio_real', 'fecha_fin_prevista',
         'fecha_fin_real', 'descripcion',
     ];
@@ -61,6 +61,17 @@ class Obra extends Model
     public function estudio(): BelongsTo
     {
         return $this->belongsTo(Estudio::class);
+    }
+
+    /** Persona del estudio contratante con la que se trata esta obra. */
+    public function estudioContacto(): BelongsTo
+    {
+        return $this->belongsTo(EstudioContacto::class);
+    }
+
+    public function tipoObra(): BelongsTo
+    {
+        return $this->belongsTo(Opcion::class, 'tipo_obra_id');
     }
 
     public function responsable(): BelongsTo

@@ -149,7 +149,7 @@ class CotizacionController extends Controller
             'clientes' => Cliente::orderBy('nombre')->pluck('nombre', 'id'),
             'estudios' => Estudio::orderBy('nombre')->pluck('nombre', 'id'),
             'contactos' => Contacto::orderBy('nombre')->get()->mapWithKeys(fn ($c) => [$c->id => $c->nombre.($c->empresa ? " ({$c->empresa})" : '')]),
-            'rubros' => Rubro::orderBy('nombre')->pluck('nombre', 'id'),
+            'rubros' => Rubro::where('activo', true)->orWhere('id', $cotizacion->rubro_id)->orderBy('nombre')->pluck('nombre', 'id'),
         ];
     }
 

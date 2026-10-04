@@ -22,7 +22,9 @@
                 @else
                     Obra directa
                 @endif
-                · Cliente: <a href="{{ route('clientes.show', $obra->cliente) }}" class="enlace">{{ $obra->cliente->nombre }}</a>
+                @if ($obra->cliente)
+                    · Cliente: <a href="{{ route('clientes.show', $obra->cliente) }}" class="enlace">{{ $obra->cliente->nombre }}</a>
+                @endif
             </span>
         </span>
     </x-slot:bajada>

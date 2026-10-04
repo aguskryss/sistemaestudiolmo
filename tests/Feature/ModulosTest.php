@@ -41,7 +41,7 @@ class ModulosTest extends TestCase
 
     private function crearObra(array $extra = []): Obra
     {
-        $estudio = Estudio::create(['nombre' => 'Estudio Norte', 'contacto_nombre' => 'Ana']);
+        $estudio = Estudio::create(['nombre' => 'Estudio Norte']);
         $cliente = Cliente::create(['tipo' => 'persona', 'nombre' => 'Familia Gómez']);
 
         $this->post('/obras', $extra + [
@@ -169,17 +169,16 @@ class ModulosTest extends TestCase
         $this->get("/obras/{$obra->id}/materiales")->assertOk()->assertSee('Cemento')->assertSee('R-1');
     }
 
-    public function test_gantt_tareas_y_dependencias(): void
+    public function test_gantt_tareas_simultaneas_y_arrastre(): void
     {
         $obra = $this->crearObra();
         $base = ['fecha_inicio' => '2026-10-10', 'fecha_fin' => '2026-10-20'];
 
         $this->post("/obras/{$obra->id}/tareas", $base + ['nombre' => 'Platea'])->assertRedirect();
         $platea = Tarea::firstOrFail();
-        $this->post("/obras/{$obra->id}/tareas", ['nombre' => 'Mampostería', 'fecha_inicio' => '2026-10-21', 'fecha_fin' => '2026-11-15', 'dependencias' => [$platea->id]])->assertRedirect();
-
-        $mamposteria = Tarea::where('nombre', 'Mampostería')->firstOrFail();
-        $this->assertTrue($mamposteria->dependeDe->contains($platea));
+        // Simultánea con la anterior: no hay dependencias entre tareas.
+        $this->post("/obras/{$obra->id}/tareas", ['nombre' => 'Instalaciones', 'fecha_inicio' => '2026-10-12', 'fecha_fin' => '2026-10-18'])->assertRedirect();
+        $this->assertSame(2, $obra->tareas()->count());
 
         $this->patchJson("/tareas/{$platea->id}/mover", ['fecha_inicio' => '2026-10-12', 'fecha_fin' => '2026-10-22'])->assertOk();
         $this->patchJson("/tareas/{$platea->id}/mover", ['avance' => 40])->assertOk();
@@ -252,7 +251,7 @@ class ModulosTest extends TestCase
     public function test_permisos(): void
     {
         $obra = $this->crearObra();
-        $this->post("/obras/{$obra->id}/permisos", ['tipo' => 'Permiso de obra', 'organismo' => 'Municipio', 'estado' => 'presentado', 'fecha_vencimiento' => today()->addDays(20)->format('Y-m-d')])->assertRedirect();
+        $this->post("/obras/{$obra->id}/permisos", ['tipo_permiso_id' => \App\Models\Opcion::where('nombre', 'Permiso de obra')->value('id'), 'organismo' => 'Municipio', 'estado' => 'presentado', 'fecha_vencimiento' => today()->addDays(20)->format('Y-m-d')])->assertRedirect();
 
         $this->get("/obras/{$obra->id}/permisos")->assertOk()->assertSee('Permiso de obra')->assertSee('Presentado');
         $this->get('/')->assertOk()->assertSee('Permiso de obra');

@@ -10,7 +10,14 @@ class Material extends Model
 {
     protected $table = 'materiales';
 
-    protected $fillable = ['nombre', 'unidad', 'rubro_id'];
+    protected $fillable = ['nombre', 'unidad', 'rubro_id', 'activo'];
+
+    protected $attributes = ['activo' => true];
+
+    protected function casts(): array
+    {
+        return ['activo' => 'boolean'];
+    }
 
     public function rubro(): BelongsTo
     {

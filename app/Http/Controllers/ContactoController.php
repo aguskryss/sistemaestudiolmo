@@ -43,7 +43,7 @@ class ContactoController extends Controller
 
     public function create(): View
     {
-        return view('contactos.form', ['contacto' => new Contacto(['tipo' => 'gremio']), 'rubros' => Rubro::orderBy('nombre')->get()]);
+        return view('contactos.form', ['contacto' => new Contacto(['tipo' => 'gremio']), 'rubros' => Rubro::where('activo', true)->orderBy('nombre')->get()]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -77,7 +77,12 @@ class ContactoController extends Controller
 
     public function edit(Contacto $contacto): View
     {
-        return view('contactos.form', ['contacto' => $contacto->load('rubros'), 'rubros' => Rubro::orderBy('nombre')->get()]);
+        $contacto->load('rubros');
+
+        return view('contactos.form', [
+            'contacto' => $contacto,
+            'rubros' => Rubro::where('activo', true)->orWhereIn('id', $contacto->rubros->pluck('id'))->orderBy('nombre')->get(),
+        ]);
     }
 
     public function update(Request $request, Contacto $contacto): RedirectResponse

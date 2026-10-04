@@ -35,29 +35,27 @@
 
     {{-- Alta --}}
     <form method="POST" action="{{ route('obras.materiales.store', $obra) }}"
-          x-data="{ abierto: {{ $errors->any() && old('nombre') !== null ? 'true' : 'false' }} }"
+          x-data="{ abierto: {{ $errors->any() && old('cantidad_necesaria') !== null ? 'true' : 'false' }} }"
           x-on:nuevo-material.window="abierto = true; $nextTick(() => $refs.nombre.focus())"
           x-show="abierto" x-cloak class="panel mb-10">
         @csrf
         <p class="rotulo-texto">Necesito</p>
         <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-6">
-            <div class="lg:col-span-2">
-                <x-campo name="nombre" label="Material" list="catalogo-materiales" required x-ref="nombre" placeholder="Ej: Cemento Portland" />
-                <datalist id="catalogo-materiales">
-                    @foreach ($catalogo as $m)
-                        <option value="{{ $m->nombre }}">{{ $m->unidad }}</option>
-                    @endforeach
-                </datalist>
+            <div class="lg:col-span-3" x-data="{ nuevo: @js(old('nombre') !== null && old('material_id') === null) }">
+                <div x-show="! nuevo">
+                    <x-select name="material_id" label="Material" placeholder="Elegí del catálogo" :options="$catalogo" x-bind:disabled="nuevo" x-ref="nombre" />
+                    <button type="button" class="enlace mt-2 cursor-pointer text-xs text-gris hover:text-tinta" x-on:click="nuevo = true">+ Uno que no está en el catálogo</button>
+                </div>
+                <div x-show="nuevo" x-cloak class="grid grid-cols-[1fr_7rem] gap-4">
+                    <x-campo name="nombre" label="Material nuevo" x-bind:disabled="! nuevo" placeholder="Ej: Cemento Portland" />
+                    <x-select name="unidad" label="Unidad" :options="$unidades->mapWithKeys(fn ($u) => [$u => $u])" x-bind:disabled="! nuevo" />
+                    <button type="button" class="enlace col-span-2 cursor-pointer justify-self-start text-xs text-gris hover:text-tinta" x-on:click="nuevo = false">← Elegir del catálogo</button>
+                </div>
             </div>
             <x-campo name="cantidad_necesaria" label="Cantidad" type="number" step="0.01" min="0.01" required />
-            <x-campo name="unidad" label="Unidad" list="unidades" required placeholder="bolsa, m³, u…" />
-            <datalist id="unidades">
-                @foreach (['u', 'bolsa', 'kg', 'tn', 'm', 'm²', 'm³', 'l', 'barra', 'rollo', 'caja', 'pallet', 'gl'] as $u)
-                    <option value="{{ $u }}">
-                @endforeach
-            </datalist>
             <x-campo name="fecha_necesaria" label="Para cuándo" type="date" />
-            <x-select name="proveedor_id" label="Proveedor" placeholder="Sin definir" :options="$proveedores" />
+            <div class="hidden lg:block"></div>
+            <div class="lg:col-span-2"><x-select name="proveedor_id" label="Proveedor (opcional)" placeholder="Sin proveedor" :options="$proveedores" /></div>
             <div class="sm:col-span-2 lg:col-span-6"><x-campo name="observaciones" label="Observaciones" /></div>
         </div>
         <div class="mt-6 flex gap-4">
@@ -98,7 +96,7 @@
                             <td class="num">{{ $cantidad($item->cantidad_pedida) }}</td>
                             <td class="num">{{ $cantidad($item->cantidad_entregada) }}</td>
                             <td><span class="{{ $claseEstado($item->estado) }}">{{ $item->estado->label() }}</span></td>
-                            <td class="text-sm">{{ $item->proveedor?->nombre ?? '—' }}</td>
+                            <td class="text-sm">{!! $item->proveedor ? e($item->proveedor->nombre) : '<span class="text-gris">Sin proveedor</span>' !!}</td>
                             <td class="font-mono text-xs whitespace-nowrap text-gris">
                                 @if ($item->fecha_necesaria)
                                     <div @class(['text-tinta' => $item->estado !== EstadoMaterial::Entregado && $item->fecha_necesaria->isPast()])>Necesario {{ $item->fecha_necesaria->format('d.m') }}</div>
@@ -136,7 +134,7 @@
                                         <div class="w-28"><x-campo :id="$tipo.'-cant-'.$item->id" name="cantidad" label="Cantidad" type="number" step="0.01" min="0.01" :value="$sugerida ?: null" required /></div>
                                         <div class="w-40"><x-campo :id="$tipo.'-fecha-'.$item->id" name="fecha" label="Fecha" type="date" :value="today()->format('Y-m-d')" required /></div>
                                         @if ($tipo === 'pedido')
-                                            <div class="w-56"><x-select :id="'prov-'.$item->id" name="proveedor_id" label="Proveedor" :value="$item->proveedor_id" placeholder="Sin definir" :options="$proveedores" /></div>
+                                            <div class="w-56"><x-select :id="'prov-'.$item->id" name="proveedor_id" label="Proveedor (opcional)" :value="$item->proveedor_id" placeholder="Sin proveedor" :options="$proveedores" /></div>
                                             <div class="w-40"><x-campo :id="'llega-'.$item->id" name="fecha_entrega_estimada" label="Llega aprox." type="date" :value="$item->fecha_entrega_estimada?->format('Y-m-d')" /></div>
                                         @else
                                             <div class="w-36"><x-campo :id="'remito-'.$item->id" name="remito" label="N° remito" /></div>

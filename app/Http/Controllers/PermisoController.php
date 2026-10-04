@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\EstadoPermiso;
 use App\Models\Obra;
+use App\Models\Opcion;
 use App\Models\Permiso;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,9 +15,9 @@ class PermisoController extends Controller
 {
     public function obra(Obra $obra): View
     {
-        $obra->load(['cliente', 'estudio', 'permisos' => fn ($q) => $q->with('adjuntos')->orderByRaw('fecha_vencimiento IS NULL')->orderBy('fecha_vencimiento')]);
+        $obra->load(['cliente', 'estudio', 'permisos' => fn ($q) => $q->with(['adjuntos', 'tipoPermiso'])->orderByRaw('fecha_vencimiento IS NULL')->orderBy('fecha_vencimiento')]);
 
-        return view('obras.permisos', compact('obra'));
+        return view('obras.permisos', ['obra' => $obra, 'tipos' => Opcion::lista('tipo_permiso')]);
     }
 
     public function store(Request $request, Obra $obra): RedirectResponse
@@ -43,7 +44,7 @@ class PermisoController extends Controller
     private function validar(Request $request): array
     {
         return $request->validate([
-            'tipo' => ['required', 'string', 'max:255'],
+            'tipo_permiso_id' => ['required', Rule::exists('opciones', 'id')->where('grupo', 'tipo_permiso')],
             'organismo' => ['nullable', 'string', 'max:255'],
             'numero_expediente' => ['nullable', 'string', 'max:50'],
             'estado' => ['required', Rule::enum(EstadoPermiso::class)],
@@ -51,6 +52,6 @@ class PermisoController extends Controller
             'fecha_aprobacion' => ['nullable', 'date'],
             'fecha_vencimiento' => ['nullable', 'date'],
             'observaciones' => ['nullable', 'string', 'max:5000'],
-        ]);
+        ], [], ['tipo_permiso_id' => 'tipo de permiso']);
     }
 }

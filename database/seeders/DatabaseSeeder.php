@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
 
         // Usuario administrador inicial. La contraseña se muestra una sola vez en consola.
         if (! User::where('rol', Rol::Admin)->exists()) {
-            $password = Str::password(16);
+            $password = Str::password(16, symbols: false); // sin símbolos: más fácil de tipear
             $admin = User::create([
                 'name' => env('ADMIN_NAME', 'Administrador'),
                 'email' => env('ADMIN_EMAIL', 'admin@estudio.local'),

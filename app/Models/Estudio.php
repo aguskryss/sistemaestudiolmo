@@ -13,9 +13,13 @@ class Estudio extends Model
     use RegistraActividad, SoftDeletes;
 
     protected $fillable = [
-        'nombre', 'razon_social', 'cuit', 'email', 'telefono', 'direccion',
-        'contacto_nombre', 'contacto_telefono', 'contacto_email', 'notas',
+        'nombre', 'razon_social', 'cuit', 'email', 'telefono', 'direccion', 'notas',
     ];
+
+    public function contactos(): HasMany
+    {
+        return $this->hasMany(EstudioContacto::class)->orderBy('nombre');
+    }
 
     public function obras(): HasMany
     {
