@@ -1,12 +1,141 @@
+@import '@fontsource/instrument-sans/400.css';
+@import '@fontsource/instrument-sans/500.css';
+@import '@fontsource/instrument-sans/600.css';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source "../**/*.blade.php";
 @source "../**/*.js";
-@source "../**/*.vue";
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    --color-tinta: #111111;
+    --color-papel: #ffffff;
+    --color-hueso: #f5f5f3;
+    --color-linea: #dededb;
+    --color-gris: #6e6e6a;
+}
+
+@layer base {
+    html {
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    body {
+        background: var(--color-papel);
+        color: var(--color-tinta);
+        font-family: var(--font-sans);
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    ::selection {
+        background: var(--color-tinta);
+        color: var(--color-papel);
+    }
+
+    :focus-visible {
+        outline: 1px solid var(--color-tinta);
+        outline-offset: 3px;
+    }
+}
+
+@layer components {
+    /* Texto de rótulo de plano: mono, chico, en mayúsculas */
+    .rotulo-texto {
+        font-family: var(--font-mono);
+        font-size: 0.6875rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .campo {
+        display: block;
+        width: 100%;
+        border: 0;
+        border-bottom: 1px solid var(--color-linea);
+        background: transparent;
+        padding: 0.5rem 0;
+        font-size: 1rem;
+        border-radius: 0;
+        transition: border-color 0.15s;
+    }
+
+    /* Sin el fondo celeste del autocompletado de Chrome */
+    .campo:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px var(--color-papel) inset;
+        -webkit-text-fill-color: var(--color-tinta);
+    }
+
+    .campo:focus {
+        outline: none;
+        border-bottom-color: var(--color-tinta);
+    }
+
+    .campo[aria-invalid='true'] {
+        border-bottom-color: var(--color-tinta);
+        border-bottom-style: dashed;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.8rem 1.4rem;
+        background: var(--color-tinta);
+        color: var(--color-papel);
+        border: 1px solid var(--color-tinta);
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+    }
+
+    .btn:hover {
+        background: var(--color-papel);
+        color: var(--color-tinta);
+    }
+
+    .btn-linea {
+        background: transparent;
+        color: var(--color-tinta);
+    }
+
+    .btn-linea:hover {
+        background: var(--color-tinta);
+        color: var(--color-papel);
+    }
+
+    .enlace {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+    }
+
+    .enlace:hover {
+        text-decoration-thickness: 2px;
+    }
+
+    /* Grilla de papel milimetrado, muy sutil */
+    .grilla {
+        background-image:
+            linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+        background-size: 24px 24px;
+    }
 }
