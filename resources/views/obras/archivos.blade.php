@@ -40,7 +40,7 @@
                 <x-vacio>Creá una carpeta para empezar a subir archivos.</x-vacio>
             @else
                 <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-tinta pb-3">
-                    <h2 class="font-serif text-2xl">{{ $actual->nombre }}</h2>
+                    <h2 class="font-titulo text-2xl">{{ $actual->nombre }}</h2>
                     @if ($documentos->isEmpty() && $actual->subcarpetas()->doesntExist())
                         <x-eliminar :action="route('carpetas.destroy', $actual)" pregunta="¿Eliminar esta carpeta vacía?" texto="Eliminar carpeta" />
                     @endif

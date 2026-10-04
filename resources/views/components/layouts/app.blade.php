@@ -54,12 +54,12 @@
                                            'hover:bg-hueso' => ! $activa,
                                        ])
                                        @if ($activa) aria-current="page" @endif>
-                                        <span @class(['font-mono text-[0.6875rem]', 'text-papel/60' => $activa, 'text-gris' => ! $activa])>{{ $n }}</span>
+                                        <span @class(['font-mono text-xs', 'text-papel/60' => $activa, 'text-gris' => ! $activa])>{{ $n }}</span>
                                         {{ $nombre }}
                                     </a>
                                 @else
                                     <span class="flex items-baseline gap-3 px-3 py-2 text-gris/50" title="Próximamente">
-                                        <span class="font-mono text-[0.6875rem]">{{ $n }}</span>
+                                        <span class="font-mono text-xs">{{ $n }}</span>
                                         {{ $nombre }}
                                     </span>
                                 @endif
@@ -88,7 +88,7 @@
                     @if ($codigo)
                         <p class="rotulo-texto text-gris">{{ $codigo }}</p>
                     @endif
-                    <h1 class="mt-2 font-serif text-4xl leading-none sm:text-5xl">{{ $titulo }}</h1>
+                    <h1 class="mt-2 font-titulo text-4xl leading-none sm:text-5xl">{{ $titulo }}</h1>
                     @isset($bajada)
                         <div class="mt-3 text-gris">{{ $bajada }}</div>
                     @endisset

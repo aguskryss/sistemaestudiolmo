@@ -25,7 +25,7 @@
                 $esHoy = $dia->isToday();
             @endphp
             <div @class(['min-h-32 border-r border-b border-linea p-2', 'bg-hueso' => $esHoy, 'max-md:min-h-0' => $delDia->isEmpty()])>
-                <p @class(['mb-2 flex items-baseline justify-between font-mono text-[0.6875rem] uppercase', 'text-tinta' => $esHoy, 'text-gris' => ! $esHoy])>
+                <p @class(['mb-2 flex items-baseline justify-between font-mono text-xs uppercase', 'text-tinta' => $esHoy, 'text-gris' => ! $esHoy])>
                     <span>{{ $dia->locale('es')->isoFormat('ddd') }}</span>
                     <span @class(['px-1', 'bg-tinta text-papel' => $esHoy])>{{ $dia->format('d') }}</span>
                 </p>
@@ -33,9 +33,9 @@
                     @foreach ($delDia as $t)
                         <li x-data="{ abierto: false }" @class(['border-l-2 px-2 py-1 text-[0.8125rem] leading-snug', 'border-linea text-gris line-through' => $t->completada_en, 'border-tinta bg-papel' => ! $t->completada_en])>
                             <button type="button" class="w-full cursor-pointer text-left" x-on:click="abierto = ! abierto">
-                                @if ($t->hora) <span class="font-mono text-[0.6875rem] text-gris">{{ substr($t->hora, 0, 5) }}</span> @endif
+                                @if ($t->hora) <span class="font-mono text-xs text-gris">{{ substr($t->hora, 0, 5) }}</span> @endif
                                 {{ $t->titulo }}
-                                @if ($t->obra) <span class="block font-mono text-[0.625rem] text-gris no-underline">{{ $t->obra->codigo_corto }}</span> @endif
+                                @if ($t->obra) <span class="block font-mono text-[0.6875rem] text-gris no-underline">{{ $t->obra->codigo_corto }}</span> @endif
                             </button>
                             <div x-show="abierto" x-cloak class="mt-2 space-y-2 border-t border-linea pt-2 text-xs no-underline">
                                 @if ($t->descripcion) <p class="whitespace-pre-line text-tinta">{{ $t->descripcion }}</p> @endif

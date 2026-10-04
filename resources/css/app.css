@@ -1,8 +1,7 @@
-@import '@fontsource/instrument-sans/400.css';
-@import '@fontsource/instrument-sans/500.css';
-@import '@fontsource/instrument-sans/600.css';
-@import '@fontsource/instrument-serif/400.css';
-@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource/ibm-plex-sans/300.css';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
 @import 'frappe-gantt';
@@ -15,15 +14,15 @@
 @source "../**/*.js";
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-    --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+    --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-titulo: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
     --color-tinta: #111111;
     --color-papel: #ffffff;
     --color-hueso: #f5f5f3;
     --color-linea: #dededb;
-    --color-gris: #6e6e6a;
+    --color-gris: #5c5c58;
 }
 
 @layer base {
@@ -54,11 +53,17 @@
 }
 
 @layer components {
-    /* Texto de rótulo de plano: mono, chico, en mayúsculas */
+    /* Títulos: livianos y grandes */
+    .font-titulo {
+        font-weight: 300;
+        letter-spacing: -0.02em;
+    }
+
+    /* Texto de rótulo: chico, en mayúsculas */
     .rotulo-texto {
-        font-family: var(--font-mono);
-        font-size: 0.6875rem;
-        letter-spacing: 0.12em;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.07em;
         text-transform: uppercase;
     }
 
@@ -99,9 +104,9 @@
         background: var(--color-tinta);
         color: var(--color-papel);
         border: 1px solid var(--color-tinta);
-        font-family: var(--font-mono);
-        font-size: 0.75rem;
-        letter-spacing: 0.12em;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
         cursor: pointer;
         transition: background 0.15s, color 0.15s;
@@ -163,10 +168,9 @@
     }
 
     .tabla th {
-        font-family: var(--font-mono);
-        font-size: 0.6875rem;
-        font-weight: 400;
-        letter-spacing: 0.12em;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
         color: var(--color-gris);
         text-align: left;
@@ -196,9 +200,9 @@
         display: inline-block;
         border: 1px solid var(--color-tinta);
         padding: 0.125rem 0.4rem;
-        font-family: var(--font-mono);
-        font-size: 0.625rem;
-        letter-spacing: 0.1em;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
         white-space: nowrap;
         line-height: 1.4;
@@ -219,8 +223,8 @@
     }
 
     .btn-chico {
-        padding: 0.45rem 0.8rem;
-        font-size: 0.6875rem;
+        padding: 0.5rem 0.85rem;
+        font-size: 0.75rem;
     }
 
     .panel {
@@ -256,14 +260,6 @@
     stroke-width: 1;
 }
 
-.gantt-container .gantt .bar-wrapper.completa .bar-progress {
-    fill: #111111;
-}
-
-.gantt-container .gantt .bar-wrapper.completa .bar-label:not(.big) {
-    fill: #ffffff;
-}
-
 .gantt-container .gantt .bar-wrapper.hito .bar {
     fill: #111111;
 }
@@ -274,8 +270,8 @@
 
 .gantt-container .upper-text,
 .gantt-container .lower-text {
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font-sans);
+    font-size: 12px;
 }
 
 .gantt-container .popup-wrapper {
@@ -283,3 +279,36 @@
     border: 1px solid #111111;
     box-shadow: none;
 }
+
+/* Colores de tareas (generado desde App\Support\Colores) */
+.gantt-container .gantt .bar-wrapper.color-terracota .bar { fill: #efd2c3; }
+.gantt-container .gantt .bar-wrapper.color-terracota .bar-progress { fill: #d69a7c; }
+.muestra-terracota { background: linear-gradient(to right, #d69a7c 50%, #efd2c3 50%); }
+.gantt-container .gantt .bar-wrapper.color-ocre .bar { fill: #f1e2b8; }
+.gantt-container .gantt .bar-wrapper.color-ocre .bar-progress { fill: #d4b25c; }
+.muestra-ocre { background: linear-gradient(to right, #d4b25c 50%, #f1e2b8 50%); }
+.gantt-container .gantt .bar-wrapper.color-oliva .bar { fill: #dfe4c3; }
+.gantt-container .gantt .bar-wrapper.color-oliva .bar-progress { fill: #a8b36a; }
+.muestra-oliva { background: linear-gradient(to right, #a8b36a 50%, #dfe4c3 50%); }
+.gantt-container .gantt .bar-wrapper.color-verde .bar { fill: #cfe3d4; }
+.gantt-container .gantt .bar-wrapper.color-verde .bar-progress { fill: #80b391; }
+.muestra-verde { background: linear-gradient(to right, #80b391 50%, #cfe3d4 50%); }
+.gantt-container .gantt .bar-wrapper.color-petroleo .bar { fill: #c9e0e1; }
+.gantt-container .gantt .bar-wrapper.color-petroleo .bar-progress { fill: #6fa7ab; }
+.muestra-petroleo { background: linear-gradient(to right, #6fa7ab 50%, #c9e0e1 50%); }
+.gantt-container .gantt .bar-wrapper.color-azul .bar { fill: #d0dbed; }
+.gantt-container .gantt .bar-wrapper.color-azul .bar-progress { fill: #7f9cc8; }
+.muestra-azul { background: linear-gradient(to right, #7f9cc8 50%, #d0dbed 50%); }
+.gantt-container .gantt .bar-wrapper.color-lavanda .bar { fill: #ded6ec; }
+.gantt-container .gantt .bar-wrapper.color-lavanda .bar-progress { fill: #a491c6; }
+.muestra-lavanda { background: linear-gradient(to right, #a491c6 50%, #ded6ec 50%); }
+.gantt-container .gantt .bar-wrapper.color-rosa .bar { fill: #efd3dc; }
+.gantt-container .gantt .bar-wrapper.color-rosa .bar-progress { fill: #cc8aa3; }
+.muestra-rosa { background: linear-gradient(to right, #cc8aa3 50%, #efd3dc 50%); }
+.gantt-container .gantt .bar-wrapper.color-arena .bar { fill: #e9e0d3; }
+.gantt-container .gantt .bar-wrapper.color-arena .bar-progress { fill: #bba68a; }
+.muestra-arena { background: linear-gradient(to right, #bba68a 50%, #e9e0d3 50%); }
+.gantt-container .gantt .bar-wrapper.color-gris .bar { fill: #e4e4e1; }
+.gantt-container .gantt .bar-wrapper.color-gris .bar-progress { fill: #a8a8a3; }
+.muestra-gris { background: linear-gradient(to right, #a8a8a3 50%, #e4e4e1 50%); }
+.gantt-container .gantt .bar-label { fill: #111111; font-weight: 500; }

@@ -142,6 +142,36 @@ class CambiosTest extends TestCase
         $this->get("/obras/{$obra->id}/materiales")->assertOk()->assertSee('Sin proveedor');
     }
 
+    public function test_colores_de_tareas_por_rubro_o_propios(): void
+    {
+        $this->post('/obras', ['nombre' => 'Casa', 'estado' => 'en_obra']);
+        $obra = Obra::firstOrFail();
+        $electrica = Rubro::where('nombre', 'Instalación eléctrica')->firstOrFail();
+        $this->assertNotNull($electrica->color, 'los rubros existentes reciben un color inicial');
+
+        $base = ['fecha_inicio' => '2026-10-10', 'fecha_fin' => '2026-10-20'];
+        $this->post("/obras/{$obra->id}/tareas", $base + ['nombre' => 'Cableado', 'rubro_id' => $electrica->id])->assertSessionHasNoErrors();
+        $this->post("/obras/{$obra->id}/tareas", $base + ['nombre' => 'Especial', 'rubro_id' => $electrica->id, 'color' => 'rosa'])->assertSessionHasNoErrors();
+        $this->post("/obras/{$obra->id}/tareas", $base + ['nombre' => 'Mala', 'color' => 'fucsia-fluo'])->assertSessionHasErrors('color');
+
+        $this->assertSame($electrica->color, $obra->tareas()->where('nombre', 'Cableado')->first()->colorEfectivo());
+        $this->assertSame('rosa', $obra->tareas()->where('nombre', 'Especial')->first()->colorEfectivo());
+
+        $this->get("/obras/{$obra->id}/calendario")->assertOk()
+            ->assertSee('color-'.$electrica->color)
+            ->assertSee('color-rosa')
+            ->assertSee('Instalación eléctrica'); // en la leyenda
+
+        // Ninguna directiva Blade tiene que llegar sin procesar al navegador
+        foreach (["/obras/{$obra->id}/calendario", "/obras/{$obra->id}/permisos", '/', '/agenda'] as $url) {
+            $this->get($url)->assertOk()->assertDontSee('@js(', false);
+        }
+
+        // Cambiar el color del rubro desde Configuración
+        $this->put("/configuracion/rubros/{$electrica->id}", ['nombre' => $electrica->nombre, 'color' => 'azul', 'activo' => 1])->assertSessionHasNoErrors();
+        $this->assertSame('azul', $obra->tareas()->where('nombre', 'Cableado')->first()->colorEfectivo());
+    }
+
     public function test_agenda_admin_asigna_y_miembro_solo_a_si_mismo(): void
     {
         $miembro = User::factory()->create(['name' => 'Juli']);

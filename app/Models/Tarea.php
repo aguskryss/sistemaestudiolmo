@@ -11,7 +11,7 @@ class Tarea extends Model
     use RegistraActividad;
 
     protected $fillable = [
-        'obra_id', 'rubro_id', 'contacto_id', 'nombre', 'fecha_inicio', 'fecha_fin', 'avance', 'es_hito', 'orden', 'notas',
+        'obra_id', 'rubro_id', 'contacto_id', 'nombre', 'color', 'fecha_inicio', 'fecha_fin', 'avance', 'es_hito', 'orden', 'notas',
     ];
 
     protected function casts(): array
@@ -21,6 +21,12 @@ class Tarea extends Model
             'fecha_fin' => 'date',
             'es_hito' => 'boolean',
         ];
+    }
+
+    /** Color propio de la tarea; si no tiene, el de su rubro; si no, gris. */
+    public function colorEfectivo(): string
+    {
+        return $this->color ?? $this->rubro?->color ?? 'gris';
     }
 
     public function obra(): BelongsTo

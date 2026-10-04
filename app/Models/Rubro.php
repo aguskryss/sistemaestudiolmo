@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Rubro extends Model
 {
-    protected $fillable = ['nombre', 'activo'];
+    protected $fillable = ['nombre', 'color', 'activo'];
 
     protected $attributes = ['activo' => true];
 

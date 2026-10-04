@@ -11,7 +11,7 @@
         <section>
             <div class="flex items-baseline justify-between border-b border-linea pb-3">
                 <h2 class="rotulo-texto">Obras</h2>
-                <span class="font-mono text-[0.6875rem] text-gris">{{ $estudio->obras->count() }}</span>
+                <span class="font-mono text-xs text-gris">{{ $estudio->obras->count() }}</span>
             </div>
             @forelse ($estudio->obras as $obra)
                 @include('obras._fila', ['obra' => $obra, 'mostrarEstudio' => false])

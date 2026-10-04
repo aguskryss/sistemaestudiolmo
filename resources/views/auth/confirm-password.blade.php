@@ -1,6 +1,6 @@
 <x-layouts.guest titulo="Confirmar contraseña" lamina="A-04">
     <p class="rotulo-texto text-gris">A-04 — Seguridad</p>
-    <h1 class="mt-3 font-serif text-5xl leading-none">Confirmá que sos vos</h1>
+    <h1 class="mt-3 font-titulo text-5xl leading-none">Confirmá que sos vos</h1>
     <p class="mt-4 text-gris">Para continuar, ingresá tu contraseña.</p>
 
     <form method="POST" action="{{ route('password.confirm') }}" class="mt-12 space-y-8">

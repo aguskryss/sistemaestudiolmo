@@ -23,7 +23,7 @@
     <section>
         <div class="flex items-baseline justify-between border-b border-linea pb-3">
             <h2 class="rotulo-texto">Esta semana en obra</h2>
-            <span class="font-mono text-[0.6875rem] text-gris">{{ today()->startOfWeek()->format('d.m') }} – {{ today()->endOfWeek()->format('d.m') }}</span>
+            <span class="font-mono text-xs text-gris">{{ today()->startOfWeek()->format('d.m') }} – {{ today()->endOfWeek()->format('d.m') }}</span>
         </div>
         @forelse ($semana as $t)
             <a href="{{ route('obras.gantt', $t->obra) }}" class="grid grid-cols-[6rem_minmax(0,1fr)_auto] items-baseline gap-4 border-b border-linea py-3 hover:bg-hueso">

@@ -9,7 +9,7 @@
             <section>
                 <div class="flex items-baseline justify-between border-b border-linea pb-3">
                     <h2 class="rotulo-texto">Notas</h2>
-                    <span class="font-mono text-[0.6875rem] text-gris">{{ $cliente->notas->count() }}</span>
+                    <span class="font-mono text-xs text-gris">{{ $cliente->notas->count() }}</span>
                 </div>
 
                 <form method="POST" action="{{ route('clientes.notas.store', $cliente) }}" class="mt-6 space-y-4">
@@ -29,7 +29,7 @@
                     @forelse ($cliente->notas as $nota)
                         <article @class(['border-b border-linea py-5', 'border-l-2 border-l-tinta pl-4' => $nota->fijada])>
                             <div class="flex flex-wrap items-baseline justify-between gap-2">
-                                <p class="font-mono text-[0.6875rem] text-gris">
+                                <p class="font-mono text-xs text-gris">
                                     {{ $nota->created_at->format('d.m.Y H:i') }} · {{ $nota->autor?->name ?? '—' }}
                                     @if ($nota->obra) · {{ $nota->obra->codigo }} @endif
                                     @if ($nota->fijada) · <span class="text-tinta">Fijada</span> @endif
@@ -54,7 +54,7 @@
             <section>
                 <div class="flex items-baseline justify-between border-b border-linea pb-3">
                     <h2 class="rotulo-texto">Obras</h2>
-                    <span class="font-mono text-[0.6875rem] text-gris">{{ $cliente->obras->count() }}</span>
+                    <span class="font-mono text-xs text-gris">{{ $cliente->obras->count() }}</span>
                 </div>
                 @forelse ($cliente->obras as $obra)
                     @include('obras._fila', ['obra' => $obra, 'mostrarCliente' => false])

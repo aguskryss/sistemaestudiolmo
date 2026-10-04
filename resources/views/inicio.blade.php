@@ -27,7 +27,7 @@
         @foreach ($indicadores as [$etiqueta, $valor, $link])
             <a href="{{ $link }}" class="border-r border-b border-linea p-5 hover:bg-hueso">
                 <dt class="rotulo-texto text-gris">{{ $etiqueta }}</dt>
-                <dd class="mt-6 font-serif text-5xl leading-none">{{ str_pad($valor, 2, '0', STR_PAD_LEFT) }}</dd>
+                <dd class="mt-6 font-titulo text-5xl leading-none">{{ str_pad($valor, 2, '0', STR_PAD_LEFT) }}</dd>
             </a>
         @endforeach
     </dl>

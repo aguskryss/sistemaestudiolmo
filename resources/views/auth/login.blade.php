@@ -1,6 +1,6 @@
 <x-layouts.guest titulo="Ingresar">
     <p class="rotulo-texto text-gris">A-00 — Acceso</p>
-    <h1 class="mt-3 font-serif text-5xl leading-none">Ingresar</h1>
+    <h1 class="mt-3 font-titulo text-5xl leading-none">Ingresar</h1>
     <p class="mt-4 text-gris">Sistema interno del estudio.</p>
 
     <x-estado class="mt-8" />

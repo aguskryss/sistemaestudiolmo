@@ -17,7 +17,7 @@
         ] as [$etiqueta, $valor, $link])
             <a href="{{ $link }}" class="border-r border-b border-linea p-5 hover:bg-hueso">
                 <dt class="rotulo-texto text-gris">{{ $etiqueta }}</dt>
-                <dd class="mt-5 font-serif text-4xl leading-none">{{ $valor }}</dd>
+                <dd class="mt-5 font-titulo text-4xl leading-none">{{ $valor }}</dd>
             </a>
         @endforeach
     </dl>
@@ -28,7 +28,7 @@
             <section id="checklist" class="scroll-mt-10">
                 <div class="flex items-baseline justify-between border-b border-linea pb-3">
                     <h2 class="rotulo-texto">Inicio de obra</h2>
-                    <span class="font-mono text-[0.6875rem] text-gris">{{ $hechos }} de {{ $total }}</span>
+                    <span class="font-mono text-xs text-gris">{{ $hechos }} de {{ $total }}</span>
                 </div>
                 <ul>
                     @foreach ($obra->checklist as $item)
@@ -45,7 +45,7 @@
                             <div class="min-w-0 flex-1">
                                 <p @class(['text-gris line-through' => $item->completado_en])>{{ $item->descripcion }}</p>
                                 @if ($item->completado_en)
-                                    <p class="font-mono text-[0.6875rem] text-gris">{{ $item->completado_en->format('d.m.Y') }} · {{ $item->completadoPor?->name }}</p>
+                                    <p class="font-mono text-xs text-gris">{{ $item->completado_en->format('d.m.Y') }} · {{ $item->completadoPor?->name }}</p>
                                 @endif
                             </div>
                             <x-eliminar :action="route('checklist.destroy', $item)" pregunta="¿Quitar este ítem del checklist?" texto="Quitar" class="opacity-0 group-hover:opacity-100 focus-within:opacity-100" />
@@ -75,7 +75,7 @@
                 @forelse ($obra->notas as $nota)
                     <article @class(['border-b border-linea py-5', 'border-l-2 border-l-tinta pl-4' => $nota->fijada])>
                         <div class="flex items-baseline justify-between gap-4">
-                            <p class="font-mono text-[0.6875rem] text-gris">{{ $nota->created_at->format('d.m.Y H:i') }} · {{ $nota->autor?->name ?? '—' }}</p>
+                            <p class="font-mono text-xs text-gris">{{ $nota->created_at->format('d.m.Y H:i') }} · {{ $nota->autor?->name ?? '—' }}</p>
                             <x-eliminar :action="route('notas.destroy', $nota)" pregunta="¿Eliminar esta nota?" />
                         </div>
                         <p class="mt-2 whitespace-pre-line">{{ $nota->contenido }}</p>

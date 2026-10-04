@@ -14,9 +14,9 @@
         <template x-if="t"><input type="hidden" name="_method" value="PUT"></template>
         <p class="rotulo-texto" x-text="t ? 'Editar tarea' : 'Nueva tarea'"></p>
 
-        <x-campo name="titulo" label="Qué" required placeholder="Ej: Relevamiento en obra" x-bind:value="t?.titulo ?? @js(old('titulo', ''))" id="agenda-titulo" />
+        <x-campo name="titulo" label="Qué" required placeholder="Ej: Relevamiento en obra" x-bind:value="t?.titulo ?? {{ \Illuminate\Support\Js::from(old('titulo', '')) }}" id="agenda-titulo" />
         <div class="grid grid-cols-2 gap-4">
-            <x-campo name="fecha" label="Día" type="date" required x-bind:value="t?.fecha ?? @js(old('fecha', today()->format('Y-m-d')))" id="agenda-fecha" />
+            <x-campo name="fecha" label="Día" type="date" required x-bind:value="t?.fecha ?? {{ \Illuminate\Support\Js::from(old('fecha', today()->format('Y-m-d'))) }}" id="agenda-fecha" />
             <x-campo name="hora" label="Hora (opcional)" type="time" x-bind:value="t?.hora ?? ''" id="agenda-hora" />
         </div>
         <x-campo name="fecha_fin" label="Hasta (si dura varios días)" type="date" x-bind:value="t?.fecha_fin ?? ''" id="agenda-fin" />

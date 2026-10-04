@@ -8,6 +8,7 @@ use App\Models\Obra;
 use App\Models\Opcion;
 use App\Models\Permiso;
 use App\Models\Rubro;
+use App\Support\Colores;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +58,10 @@ class ConfiguracionController extends Controller
         abort_unless(array_key_exists($seccion, self::SECCIONES), 404);
 
         match ($seccion) {
-            'rubros' => Rubro::create($request->validate(['nombre' => ['required', 'string', 'max:100', 'unique:rubros,nombre']])),
+            'rubros' => Rubro::create(array_filter($request->validate([
+                'nombre' => ['required', 'string', 'max:100', 'unique:rubros,nombre'],
+                'color' => ['nullable', Rule::in(array_keys(Colores::PALETA))],
+            ]), fn ($v) => $v !== null) + ['color' => array_keys(Colores::PALETA)[Rubro::count() % count(Colores::PALETA)]]),
             'materiales' => Material::create($this->validarMaterial($request)),
             'checklist' => ChecklistPlantillaItem::create($request->validate(['descripcion' => ['required', 'string', 'max:255']]) + [
                 'orden' => (int) ChecklistPlantillaItem::max('orden') + 1,
@@ -77,6 +81,7 @@ class ConfiguracionController extends Controller
         match ($seccion) {
             'rubros' => tap(Rubro::findOrFail($id), fn ($r) => $r->update($request->validate([
                 'nombre' => ['required', 'string', 'max:100', Rule::unique('rubros', 'nombre')->ignore($id)],
+                'color' => ['nullable', Rule::in(array_keys(Colores::PALETA))],
                 'activo' => ['boolean'],
             ]))),
             'materiales' => tap(Material::findOrFail($id), fn ($m) => $m->update($this->validarMaterial($request, $id) + ['activo' => $request->boolean('activo')])),

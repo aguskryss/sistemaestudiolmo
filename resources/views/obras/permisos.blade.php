@@ -21,10 +21,10 @@
             @csrf
             <template x-if="p"><input type="hidden" name="_method" value="PUT"></template>
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <x-select name="tipo_permiso_id" label="Permiso" placeholder="Elegí uno" :options="$tipos" required x-effect="$el.value = p?.tipo_permiso_id ?? @js((string) old('tipo_permiso_id', ''))" />
-                <x-campo name="organismo" label="Organismo" placeholder="Municipio, empresa de servicios…" x-bind:value="p?.organismo ?? @js(old('organismo', ''))" />
-                <x-campo name="numero_expediente" label="N° expediente" x-bind:value="p?.numero_expediente ?? @js(old('numero_expediente', ''))" />
-                <x-select name="estado" label="Estado" :options="EstadoPermiso::opciones()" x-effect="$el.value = p?.estado ?? @js(old('estado', 'a_presentar'))" />
+                <x-select name="tipo_permiso_id" label="Permiso" placeholder="Elegí uno" :options="$tipos" required x-effect="$el.value = p?.tipo_permiso_id ?? {{ \Illuminate\Support\Js::from((string) old('tipo_permiso_id', '')) }}" />
+                <x-campo name="organismo" label="Organismo" placeholder="Municipio, empresa de servicios…" x-bind:value="p?.organismo ?? {{ \Illuminate\Support\Js::from(old('organismo', '')) }}" />
+                <x-campo name="numero_expediente" label="N° expediente" x-bind:value="p?.numero_expediente ?? {{ \Illuminate\Support\Js::from(old('numero_expediente', '')) }}" />
+                <x-select name="estado" label="Estado" :options="EstadoPermiso::opciones()" x-effect="$el.value = p?.estado ?? {{ \Illuminate\Support\Js::from(old('estado', 'a_presentar')) }}" />
                 <x-campo name="fecha_presentacion" label="Presentado" type="date" x-bind:value="p?.fecha_presentacion ?? ''" />
                 <x-campo name="fecha_aprobacion" label="Aprobado" type="date" x-bind:value="p?.fecha_aprobacion ?? ''" />
                 <x-campo name="fecha_vencimiento" label="Vence" type="date" x-bind:value="p?.fecha_vencimiento ?? ''" />
@@ -42,7 +42,7 @@
             <div>
                 <p class="flex flex-wrap items-center gap-3">
                     <span class="{{ $claseEstado($permiso->estado) }}">{{ $permiso->estado->label() }}</span>
-                    <span class="font-serif text-xl">{{ $permiso->nombre() }}</span>
+                    <span class="font-titulo text-xl">{{ $permiso->nombre() }}</span>
                 </p>
                 <p class="mt-2 text-sm text-gris">{{ collect([$permiso->organismo, $permiso->numero_expediente ? 'Expte. '.$permiso->numero_expediente : null])->filter()->join(' · ') }}</p>
                 @if ($permiso->observaciones)

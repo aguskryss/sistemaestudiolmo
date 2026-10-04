@@ -1,6 +1,6 @@
 <x-layouts.guest titulo="Recuperar contraseña" lamina="A-01">
     <p class="rotulo-texto text-gris">A-01 — Acceso</p>
-    <h1 class="mt-3 font-serif text-5xl leading-none">Recuperar contraseña</h1>
+    <h1 class="mt-3 font-titulo text-5xl leading-none">Recuperar contraseña</h1>
     <p class="mt-4 text-gris">Te enviamos un link por email para elegir una contraseña nueva.</p>
 
     <x-estado class="mt-8" />

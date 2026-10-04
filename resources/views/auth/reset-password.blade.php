@@ -1,6 +1,6 @@
 <x-layouts.guest titulo="Nueva contraseña" lamina="A-02">
     <p class="rotulo-texto text-gris">A-02 — Acceso</p>
-    <h1 class="mt-3 font-serif text-5xl leading-none">Nueva contraseña</h1>
+    <h1 class="mt-3 font-titulo text-5xl leading-none">Nueva contraseña</h1>
     <p class="mt-4 text-gris">Mínimo 10 caracteres, con letras y números.</p>
 
     <form method="POST" action="{{ route('password.update') }}" class="mt-12 space-y-8">

@@ -6,6 +6,7 @@ use App\Enums\Rol;
 use App\Models\ChecklistPlantillaItem;
 use App\Models\Rubro;
 use App\Models\User;
+use App\Support\Colores;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -19,8 +20,9 @@ class DatabaseSeeder extends Seeder
             'Herrería', 'Carpintería', 'Aberturas', 'Vidriería', 'Revestimientos', 'Pintura',
             'Impermeabilización', 'Techos', 'Pisos', 'Paisajismo', 'Limpieza de obra',
         ];
-        foreach ($rubros as $nombre) {
-            Rubro::firstOrCreate(['nombre' => $nombre]);
+        $paleta = array_keys(Colores::PALETA);
+        foreach ($rubros as $i => $nombre) {
+            Rubro::firstOrCreate(['nombre' => $nombre], ['color' => Colores::RUBROS_INICIALES[$nombre] ?? $paleta[$i % count($paleta)]]);
         }
 
         $checklist = [

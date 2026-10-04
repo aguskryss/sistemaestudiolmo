@@ -6,6 +6,7 @@ use App\Models\Contacto;
 use App\Models\Obra;
 use App\Models\Rubro;
 use App\Models\Tarea;
+use App\Support\Colores;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,9 +29,14 @@ class TareaController extends Controller
                 'start' => $t->fecha_inicio->format('Y-m-d'),
                 'end' => $t->fecha_fin->format('Y-m-d'),
                 'progress' => $t->avance,
-                'custom_class' => $t->es_hito ? 'hito' : ($t->avance >= 100 ? 'completa' : ''),
+                // frappe-gantt acepta una sola clase por barra
+                'custom_class' => $t->es_hito ? 'hito' : 'color-'.$t->colorEfectivo(),
             ])->values(),
-            'rubros' => Rubro::where('activo', true)->orderBy('nombre')->pluck('nombre', 'id'),
+            'leyenda' => $tareas->reject->es_hito->groupBy(fn (Tarea $t) => $t->colorEfectivo())->map(fn ($grupo, $color) => [
+                'color' => $color,
+                'nombre' => $grupo->map(fn ($t) => $t->color ? null : $t->rubro?->nombre)->filter()->unique()->join(', ') ?: Colores::PALETA[$color][0],
+            ])->values(),
+            'rubros' => Rubro::where('activo', true)->orderBy('nombre')->get(['id', 'nombre', 'color']),
             'contactos' => Contacto::orderBy('nombre')->get()->mapWithKeys(fn ($c) => [$c->id => $c->nombre.($c->empresa ? " ({$c->empresa})" : '')]),
         ]);
     }
@@ -85,6 +91,7 @@ class TareaController extends Controller
             'avance' => ['nullable', 'integer', 'between:0,100'],
             'es_hito' => ['boolean'],
             'notas' => ['nullable', 'string', 'max:2000'],
+            'color' => ['nullable', Rule::in(array_keys(Colores::PALETA))],
         ]);
         $datos['avance'] = (int) ($datos['avance'] ?? 0);
 

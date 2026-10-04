@@ -1,3 +1,5 @@
+@php use App\Support\Colores; @endphp
+
 <x-layouts.obra :obra="$obra" seccion="Calendario">
     <x-slot:acciones>
         <button type="button" class="btn" x-data x-on:click="$dispatch('editar-tarea', null)">Agregar tarea</button>
@@ -19,6 +21,14 @@
                 </div>
             </div>
             <p x-show="error" x-cloak x-text="error" class="mb-4 border-l-2 border-tinta bg-hueso px-4 py-3 text-sm"></p>
+            <ul class="mb-4 flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Referencias">
+                @foreach ($leyenda as $ref)
+                    <li class="flex items-center gap-2"><span class="inline-block h-3 w-6 muestra-{{ $ref['color'] }}"></span>{{ $ref['nombre'] }}</li>
+                @endforeach
+                @if ($tareas->contains('es_hito', true))
+                    <li class="flex items-center gap-2"><span class="inline-block size-3 bg-tinta"></span>Hito</li>
+                @endif
+            </ul>
             <div x-ref="lienzo" class="min-h-48"></div>
         @endif
     </section>
@@ -32,16 +42,29 @@
             @csrf
             <template x-if="tarea"><input type="hidden" name="_method" value="PUT"></template>
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <div class="sm:col-span-2"><x-campo name="nombre" label="Tarea" required x-bind:value="tarea?.nombre ?? @js(old('nombre', ''))" /></div>
-                <x-campo name="fecha_inicio" label="Inicio" type="date" required x-bind:value="tarea?.fecha_inicio ?? @js(old('fecha_inicio', today()->format('Y-m-d')))" />
-                <x-campo name="fecha_fin" label="Fin" type="date" required x-bind:value="tarea?.fecha_fin ?? @js(old('fecha_fin', today()->addWeek()->format('Y-m-d')))" />
-                <x-select name="rubro_id" label="Rubro" placeholder="—" :options="$rubros" x-effect="$el.value = tarea?.rubro_id ?? ''" />
+                <div class="sm:col-span-2"><x-campo name="nombre" label="Tarea" required x-bind:value="tarea?.nombre ?? {{ \Illuminate\Support\Js::from(old('nombre', '')) }}" /></div>
+                <x-campo name="fecha_inicio" label="Inicio" type="date" required x-bind:value="tarea?.fecha_inicio ?? {{ \Illuminate\Support\Js::from(old('fecha_inicio', today()->format('Y-m-d'))) }}" />
+                <x-campo name="fecha_fin" label="Fin" type="date" required x-bind:value="tarea?.fecha_fin ?? {{ \Illuminate\Support\Js::from(old('fecha_fin', today()->addWeek()->format('Y-m-d'))) }}" />
+                <x-select name="rubro_id" label="Rubro" placeholder="—" :options="$rubros->pluck('nombre', 'id')" x-effect="$el.value = tarea?.rubro_id ?? ''" />
                 <x-select name="contacto_id" label="Gremio / contacto" placeholder="—" :options="$contactos" x-effect="$el.value = tarea?.contacto_id ?? ''" />
                 <x-campo name="avance" label="Avance %" type="number" min="0" max="100" x-bind:value="tarea?.avance ?? 0" />
                 <label class="flex items-end gap-2 pb-2 text-sm">
                     <input type="checkbox" name="es_hito" value="1" class="size-4 accent-tinta" x-bind:checked="tarea?.es_hito"> Es un hito
                 </label>
                 <div class="sm:col-span-2"><x-area name="notas" label="Notas" rows="2" x-effect="$el.value = tarea?.notas ?? ''" /></div>
+                <div class="sm:col-span-2" x-data="{ color: '' }" x-effect="color = tarea?.color ?? ''">
+                    <p class="rotulo-texto text-gris">Color</p>
+                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                        <button type="button" class="cursor-pointer border px-3 py-1.5 text-sm" :class="color === '' ? 'border-tinta bg-tinta text-papel' : 'border-linea hover:border-tinta'" x-on:click="color = ''">Según rubro</button>
+                        @foreach (Colores::PALETA as $clave => [$nombreColor])
+                            <button type="button" title="{{ $nombreColor }}" aria-label="{{ $nombreColor }}"
+                                    class="size-8 cursor-pointer border border-tinta/20 muestra-{{ $clave }}"
+                                    :class="color === '{{ $clave }}' && 'outline-2 outline-offset-2 outline-tinta'"
+                                    x-on:click="color = '{{ $clave }}'"></button>
+                        @endforeach
+                    </div>
+                    <input type="hidden" name="color" :value="color">
+                </div>
             </div>
             <div class="mt-6 flex gap-4">
                 <button type="submit" class="btn btn-chico">Guardar</button>
@@ -70,7 +93,7 @@
                     @foreach ($tareas as $t)
                         <tr>
                             <td>
-                                {{ $t->nombre }} @if ($t->es_hito) <span class="etiqueta etiqueta-llena ml-1">Hito</span> @endif
+                                <span class="mr-1.5 inline-block size-3 align-[-1px] {{ $t->es_hito ? 'bg-tinta' : 'muestra-'.$t->colorEfectivo() }}"></span>{{ $t->nombre }} @if ($t->es_hito) <span class="etiqueta etiqueta-llena ml-1">Hito</span> @endif
                             </td>
                             <td class="text-sm">{{ $t->rubro?->nombre ?? '—' }}</td>
                             <td class="text-sm">{{ $t->contacto?->nombre ?? '—' }}</td>
@@ -89,7 +112,7 @@
                                         x-on:click="$dispatch('editar-tarea', @js([
                                             'id' => $t->id, 'nombre' => $t->nombre, 'fecha_inicio' => $t->fecha_inicio->format('Y-m-d'),
                                             'fecha_fin' => $t->fecha_fin->format('Y-m-d'), 'rubro_id' => $t->rubro_id, 'contacto_id' => $t->contacto_id,
-                                            'avance' => $t->avance, 'es_hito' => $t->es_hito, 'notas' => $t->notas,
+                                            'avance' => $t->avance, 'es_hito' => $t->es_hito, 'notas' => $t->notas, 'color' => $t->color,
                                         ]))">Editar</button>
                                     <x-eliminar :action="route('tareas.destroy', $t)" pregunta="¿Eliminar esta tarea?" />
                                 </div>

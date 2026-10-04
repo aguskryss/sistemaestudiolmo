@@ -44,7 +44,7 @@
             <div class="mt-6 flex items-baseline justify-between border-t border-tinta pt-4">
                 <span class="rotulo-texto">Total</span>
                 <span class="text-right">
-                    <span class="font-serif text-4xl">{{ Formato::dinero($c->total, $c->moneda) }}</span>
+                    <span class="font-titulo text-4xl">{{ Formato::dinero($c->total, $c->moneda) }}</span>
                     @if ($c->moneda->value === 'USD' && $c->tipo_cambio)
                         <span class="block font-mono text-sm text-gris">≈ {{ Formato::dinero($c->total * $c->tipo_cambio, 'ARS') }} (TC {{ $num($c->tipo_cambio) }})</span>
                     @endif

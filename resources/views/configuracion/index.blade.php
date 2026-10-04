@@ -4,7 +4,7 @@
     $campo = $seccion === 'checklist' ? 'descripcion' : 'nombre';
     $ayuda = [
         'tipo_obra' => 'Aparecen al cargar o editar una obra.',
-        'rubros' => 'Para clasificar contactos, tareas del calendario, cotizaciones y materiales.',
+        'rubros' => 'Para clasificar contactos, tareas, cotizaciones y materiales. El color identifica sus tareas en el calendario de obra.',
         'materiales' => 'El catálogo que se elige al agregar materiales a una obra.',
         'unidad' => 'Unidades de medida de los materiales.',
         'tipo_permiso' => 'Aparecen al cargar un permiso en una obra.',
@@ -29,7 +29,7 @@
 
         <section class="min-w-0">
             <div class="border-b border-tinta pb-3">
-                <h2 class="font-serif text-2xl">{{ $titulo }}</h2>
+                <h2 class="font-titulo text-2xl">{{ $titulo }}</h2>
                 <p class="mt-1 text-sm text-gris">{{ $ayuda }}</p>
             </div>
 
@@ -39,6 +39,9 @@
                 <div class="min-w-56 flex-1">
                     <x-campo :name="$campo" :label="$seccion === 'checklist' ? 'Nuevo ítem' : 'Nuevo'" required id="nuevo" />
                 </div>
+                @if ($seccion === 'rubros')
+                    <div class="w-40"><x-select name="color" label="Color" placeholder="Automático" :options="\App\Support\Colores::opciones()" id="nuevo-color" /></div>
+                @endif
                 @if ($seccion === 'materiales')
                     <div class="w-32"><x-select name="unidad" label="Unidad" :options="$unidades->mapWithKeys(fn ($u) => [$u => $u])" required id="nueva-unidad" /></div>
                     <div class="w-52"><x-select name="rubro_id" label="Rubro" placeholder="—" :options="$rubros" id="nuevo-rubro" /></div>
@@ -56,6 +59,7 @@
                             <tr>
                                 @if ($seccion === 'checklist') <th class="w-20">Orden</th> @endif
                                 <th>{{ $seccion === 'checklist' ? 'Ítem' : 'Nombre' }}</th>
+                                @if ($seccion === 'rubros') <th class="w-48">Color</th> @endif
                                 @if ($seccion === 'materiales') <th class="w-28">Unidad</th><th class="w-48">Rubro</th> @endif
                                 @if ($seccion !== 'checklist') <th class="num">En uso</th> @endif
                                 <th class="w-20">Activo</th>
@@ -70,6 +74,18 @@
                                         <td><input form="{{ $f }}" name="orden" type="number" min="0" max="999" value="{{ $item->orden }}" class="campo font-mono" aria-label="Orden"></td>
                                     @endif
                                     <td><input form="{{ $f }}" name="{{ $campo }}" value="{{ $item->{$campo} }}" required maxlength="255" class="campo" aria-label="Nombre"></td>
+                                    @if ($seccion === 'rubros')
+                                        <td>
+                                            <div class="flex items-center gap-2" x-data="{ c: @js($item->color ?? 'gris') }">
+                                                <span class="inline-block size-4 shrink-0" :class="'muestra-' + c"></span>
+                                                <select form="{{ $f }}" name="color" class="campo" aria-label="Color" x-model="c">
+                                                    @foreach (\App\Support\Colores::opciones() as $clave => $nombreColor)
+                                                        <option value="{{ $clave }}" @selected($clave === ($item->color ?? 'gris'))>{{ $nombreColor }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                    @endif
                                     @if ($seccion === 'materiales')
                                         <td>
                                             <select form="{{ $f }}" name="unidad" class="campo" aria-label="Unidad">

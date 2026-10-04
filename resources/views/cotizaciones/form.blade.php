@@ -95,7 +95,7 @@
                     </div>
                     <p class="ml-auto text-right">
                         <span class="rotulo-texto text-gris">Total</span>
-                        <span class="block font-serif text-4xl" x-text="formato(total)"></span>
+                        <span class="block font-titulo text-4xl" x-text="formato(total)"></span>
                     </p>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 <x-layouts.guest titulo="Verificación" lamina="A-03">
     <div x-data="{ recuperacion: {{ $errors->has('recovery_code') ? 'true' : 'false' }} }">
         <p class="rotulo-texto text-gris">A-03 — Acceso</p>
-        <h1 class="mt-3 font-serif text-5xl leading-none">Verificación</h1>
+        <h1 class="mt-3 font-titulo text-5xl leading-none">Verificación</h1>
 
         <p class="mt-4 text-gris" x-show="! recuperacion">Ingresá el código de 6 dígitos de tu app de autenticación.</p>
         <p class="mt-4 text-gris" x-show="recuperacion" x-cloak>Ingresá uno de tus códigos de recuperación.</p>

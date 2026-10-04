@@ -16,7 +16,7 @@
                         $porMoneda = $grupo->groupBy(fn ($c) => $c->moneda->value);
                     @endphp
                     <div class="panel">
-                        <p class="font-serif text-xl">{{ $grupo->first()->rubro->nombre }}</p>
+                        <p class="font-titulo text-xl">{{ $grupo->first()->rubro->nombre }}</p>
                         @foreach ($porMoneda as $moneda => $cotis)
                             @php $minimo = $cotis->min(fn ($c) => (float) $c->total); @endphp
                             <ul class="mt-4">
