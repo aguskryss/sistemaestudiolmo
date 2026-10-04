@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\EstadoCotizacion;
 use App\Enums\Moneda;
 use App\Enums\TipoCotizacion;
+use App\Models\Concerns\RegistraActividad;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,14 +15,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cotizacion extends Model
 {
-    use SoftDeletes;
+    use RegistraActividad, SoftDeletes;
 
     protected $table = 'cotizaciones';
 
     protected $attributes = ['estado' => 'borrador', 'moneda' => 'ARS', 'total' => 0];
 
     protected $fillable = [
-        'tipo', 'numero', 'titulo', 'obra_id', 'cliente_id', 'contacto_id', 'rubro_id', 'fecha', 'valida_hasta',
+        'tipo', 'numero', 'titulo', 'obra_id', 'cliente_id', 'estudio_id', 'contacto_id', 'rubro_id', 'fecha', 'valida_hasta',
         'moneda', 'tipo_cambio', 'estado', 'observaciones',
     ];
 
@@ -56,6 +57,11 @@ class Cotizacion extends Model
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);
+    }
+
+    public function estudio(): BelongsTo
+    {
+        return $this->belongsTo(Estudio::class);
     }
 
     public function contacto(): BelongsTo

@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum EstadoCotizacion: string
 {
+    use Concerns\ConOpciones;
+
     case Borrador = 'borrador';
     case Pendiente = 'pendiente';
     case Aceptada = 'aceptada';

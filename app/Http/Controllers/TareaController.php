@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Contacto;
+use App\Models\Obra;
+use App\Models\Rubro;
+use App\Models\Tarea;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
+
+class TareaController extends Controller
+{
+    public function index(Obra $obra): View
+    {
+        $obra->load(['cliente', 'estudio']);
+        $tareas = $obra->tareas()->with(['rubro', 'contacto', 'dependeDe'])->get();
+
+        return view('obras.gantt', [
+            'obra' => $obra,
+            'tareas' => $tareas,
+            'gantt' => $tareas->map(fn (Tarea $t) => [
+                'id' => (string) $t->id,
+                'name' => $t->nombre.($t->contacto ? ' · '.$t->contacto->nombre : ''),
+                'start' => $t->fecha_inicio->format('Y-m-d'),
+                'end' => $t->fecha_fin->format('Y-m-d'),
+                'progress' => $t->avance,
+                'dependencies' => $t->dependeDe->pluck('id')->map(fn ($id) => (string) $id)->join(','),
+                'custom_class' => $t->es_hito ? 'hito' : ($t->avance >= 100 ? 'completa' : ''),
+            ])->values(),
+            'rubros' => Rubro::orderBy('nombre')->pluck('nombre', 'id'),
+            'contactos' => Contacto::orderBy('nombre')->get()->mapWithKeys(fn ($c) => [$c->id => $c->nombre.($c->empresa ? " ({$c->empresa})" : '')]),
+        ]);
+    }
+
+    public function store(Request $request, Obra $obra): RedirectResponse
+    {
+        $datos = $this->validar($request, $obra);
+
+        DB::transaction(function () use ($obra, $datos) {
+            $tarea = $obra->tareas()->create(collect($datos)->except('dependencias')->all() + [
+                'orden' => (int) $obra->tareas()->max('orden') + 1,
+            ]);
+            $tarea->dependeDe()->sync($datos['dependencias'] ?? []);
+        });
+
+        return back()->with('status', 'Tarea agregada.');
+    }
+
+    public function update(Request $request, Tarea $tarea): RedirectResponse
+    {
+        $datos = $this->validar($request, $tarea->obra, $tarea);
+
+        DB::transaction(function () use ($tarea, $datos) {
+            $tarea->update(collect($datos)->except('dependencias')->all());
+            $tarea->dependeDe()->sync($datos['dependencias'] ?? []);
+        });
+
+        return back()->with('status', 'Tarea actualizada.');
+    }
+
+    /** Arrastre de barras en el Gantt. */
+    public function mover(Request $request, Tarea $tarea): JsonResponse
+    {
+        $datos = $request->validate([
+            'fecha_inicio' => ['sometimes', 'required', 'date'],
+            'fecha_fin' => ['sometimes', 'required', 'date', 'after_or_equal:fecha_inicio'],
+            'avance' => ['sometimes', 'required', 'integer', 'between:0,100'],
+        ]);
+
+        $tarea->update($datos);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function destroy(Tarea $tarea): RedirectResponse
+    {
+        $tarea->delete();
+
+        return back()->with('status', 'Tarea eliminada.');
+    }
+
+    private function validar(Request $request, Obra $obra, ?Tarea $tarea = null): array
+    {
+        $request->merge(['es_hito' => $request->boolean('es_hito')]);
+
+        return $request->validate([
+            'nombre' => ['required', 'string', 'max:255'],
+            'rubro_id' => ['nullable', Rule::exists('rubros', 'id')],
+            'contacto_id' => ['nullable', Rule::exists('contactos', 'id')],
+            'fecha_inicio' => ['required', 'date'],
+            'fecha_fin' => ['required', 'date', 'after_or_equal:fecha_inicio'],
+            'avance' => ['nullable', 'integer', 'between:0,100'],
+            'es_hito' => ['boolean'],
+            'notas' => ['nullable', 'string', 'max:2000'],
+            'dependencias' => ['nullable', 'array'],
+            'dependencias.*' => [
+                Rule::exists('tareas', 'id')->where('obra_id', $obra->id),
+                Rule::notIn(array_filter([$tarea?->id])),
+            ],
+        ]) + ['avance' => (int) $request->input('avance', 0)];
+    }
+}

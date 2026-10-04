@@ -33,7 +33,7 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            'serve' => false, // los archivos solo se sirven desde controladores con autenticación
             'throw' => false,
             'report' => false,
         ],

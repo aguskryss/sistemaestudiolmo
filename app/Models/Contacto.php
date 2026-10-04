@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TipoContacto;
+use App\Models\Concerns\RegistraActividad;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contacto extends Model
 {
-    use SoftDeletes;
+    use RegistraActividad, SoftDeletes;
 
     protected $fillable = [
         'tipo', 'nombre', 'empresa', 'cuit', 'telefono', 'email', 'direccion', 'calificacion', 'notas',

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Moneda;
 use App\Enums\TipoSeguro;
+use App\Models\Concerns\RegistraActividad;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Seguro extends Model
 {
-    use SoftDeletes;
+    use RegistraActividad, SoftDeletes;
 
     protected $attributes = ['moneda' => 'ARS'];
 
@@ -46,6 +47,17 @@ class Seguro extends Model
     public function estaVigente(): bool
     {
         return today()->betweenIncluded($this->vigencia_desde, $this->vigencia_hasta);
+    }
+
+    /** [texto, clase CSS] de la etiqueta de vigencia. */
+    public function situacion(): array
+    {
+        return match (true) {
+            $this->vigencia_hasta->lt(today()) => ['Vencido', 'etiqueta etiqueta-alerta'],
+            $this->vigencia_desde->gt(today()) => ['Desde '.$this->vigencia_desde->format('d.m'), 'etiqueta etiqueta-tenue'],
+            $this->vigencia_hasta->lte(today()->addDays(15)) => ['Vence '.$this->vigencia_hasta->format('d.m'), 'etiqueta'],
+            default => ['Vigente', 'etiqueta etiqueta-llena'],
+        };
     }
 
     public function contacto(): BelongsTo

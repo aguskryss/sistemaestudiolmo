@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Enums\EstadoMaterial;
+use App\Models\Concerns\RegistraActividad;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ObraMaterial extends Model
 {
+    use RegistraActividad;
+
     protected $table = 'obra_materiales';
 
     protected $attributes = ['estado' => 'necesito', 'cantidad_pedida' => 0, 'cantidad_entregada' => 0];

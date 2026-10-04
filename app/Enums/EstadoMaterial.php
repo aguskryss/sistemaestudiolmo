@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum EstadoMaterial: string
 {
+    use Concerns\ConOpciones;
+
     case Necesito = 'necesito';
     case Pedido = 'pedido';
     case EntregadoParcial = 'entregado_parcial';

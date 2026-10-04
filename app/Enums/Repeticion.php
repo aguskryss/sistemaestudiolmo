@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum Repeticion: string
 {
+    use Concerns\ConOpciones;
+
     case Diaria = 'diaria';
     case Semanal = 'semanal';
     case Mensual = 'mensual';

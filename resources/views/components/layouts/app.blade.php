@@ -5,12 +5,16 @@
     $secciones = [
         'inicio' => 'Inicio',
         'obras.index' => 'Obras',
+        'estudios.index' => 'Estudios',
         'clientes.index' => 'Clientes',
         'contactos.index' => 'Contactos',
         'cotizaciones.index' => 'Cotizaciones',
         'calendario' => 'Calendario',
         'recordatorios.index' => 'Recordatorios',
     ];
+    if (auth()->user()->esAdmin()) {
+        $secciones['usuarios.index'] = 'Usuarios';
+    }
 @endphp
 
 <!DOCTYPE html>
@@ -77,12 +81,32 @@
         </aside>
 
         <main class="px-6 py-10 sm:px-10 lg:px-16 lg:py-14">
-            <header class="border-b border-tinta pb-6">
-                @if ($codigo)
-                    <p class="rotulo-texto text-gris">{{ $codigo }}</p>
-                @endif
-                <h1 class="mt-2 font-serif text-4xl leading-none sm:text-5xl">{{ $titulo }}</h1>
+            <header class="flex flex-col gap-6 border-b border-tinta pb-6 sm:flex-row sm:items-end sm:justify-between">
+                <div class="min-w-0">
+                    @if ($codigo)
+                        <p class="rotulo-texto text-gris">{{ $codigo }}</p>
+                    @endif
+                    <h1 class="mt-2 font-serif text-4xl leading-none sm:text-5xl">{{ $titulo }}</h1>
+                    @isset($bajada)
+                        <div class="mt-3 text-gris">{{ $bajada }}</div>
+                    @endisset
+                </div>
+                @isset($acciones)
+                    <div class="flex shrink-0 flex-wrap items-center gap-3">{{ $acciones }}</div>
+                @endisset
             </header>
+
+            @isset($pestanas)
+                <nav class="flex gap-6 overflow-x-auto overflow-y-hidden border-b border-linea" aria-label="Secciones">{{ $pestanas }}</nav>
+            @endisset
+
+            <x-estado class="mt-8" />
+
+            @if ($errors->any())
+                <div class="mt-8 border-l-2 border-dashed border-tinta bg-hueso px-4 py-3 text-sm" role="alert">
+                    Revisá los datos: {{ $errors->first() }}@if ($errors->count() > 1) <span class="text-gris">(y {{ $errors->count() - 1 }} más)</span>@endif
+                </div>
+            @endif
 
             <div class="mt-10">
                 {{ $slot }}

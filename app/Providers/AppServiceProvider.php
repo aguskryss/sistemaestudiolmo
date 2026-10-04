@@ -8,6 +8,7 @@ use App\Models\Contacto;
 use App\Models\Cotizacion;
 use App\Models\Documento;
 use App\Models\DocumentoVersion;
+use App\Models\Estudio;
 use App\Models\Nota;
 use App\Models\Obra;
 use App\Models\ObraMaterial;
@@ -20,7 +21,9 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -43,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'user' => User::class,
             'cliente' => Cliente::class,
+            'estudio' => Estudio::class,
             'obra' => Obra::class,
             'contacto' => Contacto::class,
             'documento' => Documento::class,
@@ -64,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
 
             return $this->app->isProduction() ? $rule->uncompromised() : $rule;
         });
+
+        Gate::define('admin', fn (User $user) => $user->esAdmin());
+
+        Paginator::defaultView('pagination.estudio');
 
         $this->registrarActividadDeAcceso();
     }

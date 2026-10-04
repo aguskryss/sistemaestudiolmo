@@ -8,7 +8,9 @@ erDiagram
     users ||--o{ recordatorios : recibe
     users ||--o{ actividad : genera
 
-    clientes ||--o{ obras : tiene
+    estudios ||--o{ obras : "nos subcontrata"
+    estudios ||--o{ cotizaciones : "emitidas a"
+    clientes ||--o{ obras : "cliente final"
     clientes ||--o{ notas : tiene
     clientes ||--o{ cotizaciones : "emitidas a"
 
@@ -52,6 +54,7 @@ Polimórficas (guardan `tipo` + `id`, con nombres cortos definidos en `AppServic
 
 | Tema | Decisión |
 |---|---|
+| Subcontratación | `estudios` = estudios que nos pasan obras. Cada obra tiene `estudio_id` (null = obra directa), `codigo_estudio` (cómo la identifican ellos) y `cliente_id` (comitente final). |
 | Última versión de un archivo | `documento_versiones` con `numero` incremental; la vigente es la de número mayor. Las anteriores quedan como historial. |
 | Materiales | Necesito / pedí / entregaron se calcula desde `obra_material_movimientos`, así se soportan entregas parciales y queda registro de quién, cuándo y con qué remito. |
 | Cotizaciones | Una sola tabla con `tipo` = `recibida` (de un contacto) o `emitida` (a un cliente). `obra_id` es opcional para presupuestos previos a la obra. |

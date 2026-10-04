@@ -5,8 +5,6 @@
 @endphp
 
 <x-layouts.app titulo="Mi perfil" codigo="P-01 — Cuenta">
-    <x-estado class="mb-10" />
-
     <div class="divide-y divide-linea">
 
         {{-- Datos --}}

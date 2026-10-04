@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum TipoCliente: string
 {
+    use Concerns\ConOpciones;
+
     case Persona = 'persona';
     case Empresa = 'empresa';
 

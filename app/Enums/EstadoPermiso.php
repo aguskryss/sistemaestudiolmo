@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum EstadoPermiso: string
 {
+    use Concerns\ConOpciones;
+
     case APresentar = 'a_presentar';
     case Presentado = 'presentado';
     case Observado = 'observado';

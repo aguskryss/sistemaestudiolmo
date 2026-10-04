@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum TipoSeguro: string
 {
+    use Concerns\ConOpciones;
+
     case Art = 'art';
     case Ap = 'ap';
     case Rc = 'rc';

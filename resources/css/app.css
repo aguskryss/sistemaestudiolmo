@@ -5,6 +5,7 @@
 @import '@fontsource/instrument-serif/400-italic.css';
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
+@import 'frappe-gantt';
 
 @import 'tailwindcss';
 
@@ -138,4 +139,147 @@
             linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
         background-size: 24px 24px;
     }
+}
+
+@layer components {
+    select.campo {
+        appearance: none;
+        padding-right: 1.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23111' stroke-width='1.2'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.25rem center;
+    }
+
+    textarea.campo {
+        min-height: 6rem;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .tabla {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9375rem;
+    }
+
+    .tabla th {
+        font-family: var(--font-mono);
+        font-size: 0.6875rem;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-gris);
+        text-align: left;
+        padding: 0 1rem 0.75rem 0;
+        border-bottom: 1px solid var(--color-tinta);
+        white-space: nowrap;
+    }
+
+    .tabla td {
+        padding: 0.9rem 1rem 0.9rem 0;
+        border-bottom: 1px solid var(--color-linea);
+        vertical-align: top;
+    }
+
+    .tabla tbody tr:hover td {
+        background: var(--color-hueso);
+    }
+
+    .tabla .num {
+        text-align: right;
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .etiqueta {
+        display: inline-block;
+        border: 1px solid var(--color-tinta);
+        padding: 0.125rem 0.4rem;
+        font-family: var(--font-mono);
+        font-size: 0.625rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        line-height: 1.4;
+    }
+
+    .etiqueta-llena {
+        background: var(--color-tinta);
+        color: var(--color-papel);
+    }
+
+    .etiqueta-tenue {
+        border-color: var(--color-linea);
+        color: var(--color-gris);
+    }
+
+    .etiqueta-alerta {
+        border-style: dashed;
+    }
+
+    .btn-chico {
+        padding: 0.45rem 0.8rem;
+        font-size: 0.6875rem;
+    }
+
+    .panel {
+        border: 1px solid var(--color-linea);
+        padding: 1.5rem;
+    }
+}
+
+/* Gantt en blanco y negro */
+.gantt-container {
+    --g-bar-color: #ffffff;
+    --g-bar-border: #111111;
+    --g-progress-color: #d9d9d5;
+    --g-arrow-color: #111111;
+    --g-header-background: #ffffff;
+    --g-row-color: #ffffff;
+    --g-row-border-color: #ededea;
+    --g-border-color: #dededb;
+    --g-tick-color: #f2f2ef;
+    --g-tick-color-thick: #dededb;
+    --g-today-highlight: #111111;
+    --g-weekend-highlight-color: #f7f7f5;
+    --g-text-dark: #111111;
+    --g-text-muted: #6e6e6a;
+    --g-handle-color: #111111;
+    --g-actions-background: #f5f5f3;
+    font-family: var(--font-sans);
+    border: 1px solid var(--color-linea);
+    border-radius: 0;
+}
+
+.gantt-container .gantt .bar-wrapper .bar {
+    stroke-width: 1;
+}
+
+.gantt-container .gantt .bar-wrapper.completa .bar-progress {
+    fill: #111111;
+}
+
+.gantt-container .gantt .bar-wrapper.completa .bar-label:not(.big) {
+    fill: #ffffff;
+}
+
+.gantt-container .gantt .bar-wrapper.hito .bar {
+    fill: #111111;
+}
+
+.gantt-container .gantt .bar-wrapper.hito .bar-label:not(.big) {
+    fill: #ffffff;
+}
+
+.gantt-container .upper-text,
+.gantt-container .lower-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+.gantt-container .popup-wrapper {
+    border-radius: 0;
+    border: 1px solid #111111;
+    box-shadow: none;
 }

@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum TipoContacto: string
 {
+    use Concerns\ConOpciones;
+
     case Gremio = 'gremio';
     case Proveedor = 'proveedor';
     case Profesional = 'profesional';

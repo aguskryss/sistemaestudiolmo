@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\RegistraActividad;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Tarea extends Model
 {
+    use RegistraActividad;
+
     protected $fillable = [
         'obra_id', 'rubro_id', 'contacto_id', 'nombre', 'fecha_inicio', 'fecha_fin', 'avance', 'es_hito', 'orden', 'notas',
     ];

@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum TipoMovimientoMaterial: string
 {
+    use Concerns\ConOpciones;
+
     case Pedido = 'pedido';
     case Entrega = 'entrega';
     case Ajuste = 'ajuste';

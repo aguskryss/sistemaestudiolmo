@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\RegistraActividad;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Documento extends Model
 {
-    use SoftDeletes;
+    use RegistraActividad, SoftDeletes;
 
     protected $fillable = ['obra_id', 'carpeta_id', 'nombre', 'descripcion'];
 

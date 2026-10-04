@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum Rol: string
 {
+    use Concerns\ConOpciones;
+
     case Admin = 'admin';
     case Miembro = 'miembro';
 

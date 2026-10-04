@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\EstadoObra;
+use App\Models\Concerns\RegistraActividad;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,12 +13,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Obra extends Model
 {
-    use SoftDeletes;
+    use RegistraActividad, SoftDeletes;
 
     protected $attributes = ['estado' => 'proyecto'];
 
     protected $fillable = [
-        'numero', 'cliente_id', 'responsable_id', 'nombre', 'direccion', 'localidad', 'tipo', 'estado',
+        'numero', 'cliente_id', 'estudio_id', 'codigo_estudio', 'responsable_id', 'nombre', 'direccion', 'localidad', 'tipo', 'estado',
         'superficie_m2', 'fecha_inicio_prevista', 'fecha_inicio_real', 'fecha_fin_prevista',
         'fecha_fin_real', 'descripcion',
     ];
@@ -40,6 +41,12 @@ class Obra extends Model
         return Attribute::get(fn () => 'Obra N° '.str_pad((string) $this->numero, 3, '0', STR_PAD_LEFT));
     }
 
+    /** "N° 014", para listados angostos */
+    protected function codigoCorto(): Attribute
+    {
+        return Attribute::get(fn () => 'N° '.str_pad((string) $this->numero, 3, '0', STR_PAD_LEFT));
+    }
+
     public static function siguienteNumero(): int
     {
         return (int) static::withTrashed()->max('numero') + 1;
@@ -48,6 +55,12 @@ class Obra extends Model
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);
+    }
+
+    /** Estudio que nos subcontrató la obra; null si es una obra directa. */
+    public function estudio(): BelongsTo
+    {
+        return $this->belongsTo(Estudio::class);
     }
 
     public function responsable(): BelongsTo
